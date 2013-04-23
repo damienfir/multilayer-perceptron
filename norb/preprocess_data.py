@@ -57,7 +57,7 @@ data = {
 }	
 
 basename = os.path.basename(path)
-dirname = os.path.dirname(path)
+dirname = os.path.dirname(os.path.abspath(path))
 qualification = basename.split('_', 1)[1]
 save_path = dirname + '/processed_' + qualification
 scipy.io.savemat(save_path, data)
