@@ -1,3 +1,4 @@
+import numpy as np
 
 class Gradient:
 
@@ -7,13 +8,15 @@ class Gradient:
 		self.previous = None
 
 	def descend(self, gradients, ws):
-		if self.previous == None:
-			self.previous = (0,) * len(gradients)
+		if self.previous == None and len(gradients) > 0:
+			self.previous = []
+			for m in gradients:
+				self.previous.append(np.matrix(np.zeros(m.shape)))
 		if len(gradients) != len(ws) or len(self.previous) != len(ws):
 			raise Exception("incompatible inputs: shapes don't match")
 		def update_wk(args):
 			gradient,previous,w = args
-			delta_wk = -nu * (1 - mu) * gradient + mu * previous
+			delta_wk = -self.nu * (1 - self.mu) * gradient + self.mu * previous
 			return (w + delta_wk, delta_wk)
 		new = map(update_wk, zip(gradients, self.previous, ws))
 		result,previous = map(lambda x: x[0], new), map(lambda x: x[1], new)

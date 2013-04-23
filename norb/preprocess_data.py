@@ -2,6 +2,8 @@ import random
 import sys, os
 import scipy.io, numpy as np
 
+random.seed(123456)
+
 if len(sys.argv) <= 1:
 	print "Usage:",os.path.basename(sys.argv[0]),"path_to_matrix"
 	sys.exit(1)
@@ -16,7 +18,7 @@ norb_train_cat = np.array(norb['train_cat_s'])
 # normalize the data as specified in the project description
 def normalize(array):
 	m,n = array.shape
-	mean = array.sum(1) / n
+	mean = array.sum(1) / float(n)
 	mean_matrix = np.tile(mean, (n, 1)).transpose()
 	mean_difference = array - mean_matrix
 	squared_difference = mean_difference ** 2
