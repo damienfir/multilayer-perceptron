@@ -1,4 +1,4 @@
-import utils
+from utils import *
 import random
 import scipy.io
 import numpy as np
@@ -10,7 +10,7 @@ class MLP:
 		np.random.seed(seed)
 		def rand(dim1, dim2):
 			# We use dim1 + 1 here to model the b variable
-			return (1.0 / dim1) * np.random.randn(dim1 + 1, dim2)
+			return (1.0 / dim1) * np.matrix(np.random.randn(dim1 + 1, dim2))
 		self.w1_left = rand(dimension, H1)
 		self.w1_right = rand(dimension, H1)
 		self.w2_left = rand(H1, H2)
@@ -19,55 +19,64 @@ class MLP:
 		self.w3 = rand(H2, 1)
 
 	def forward_pass(self, x_left, x_right):
-		print x_left.shape, x_right.shape
 		# first layer
+		b = np.matrix(np.ones([1, x_left.shape[1]])) 
 		a1_left = self.w1_left.T * x_left
-		z1_left = utils.tanh(a1_left)
+		z1_left = tanh(a1_left)
+		z1_left_b = np.vstack([z1_left, b])
 		a1_right = self.w1_right.T * x_right
-		z1_right = utils.tanh(a1_right)
+		z1_right = tanh(a1_right)
+		z1_right_b = np.vstack([z1_right, b])
+		z1_leftright_b = np.vstack([z1_left, z1_right, b])
 
 		# second layer
-		a2_left = self.w2_left.T * z1_left
-		a2_right = self.w2_right.T * z1_right
-		a2_leftright = self.w2_leftright.T * np.hstack(z1_left.T, z1_right.T)
-		z2 = a2_leftright * utils.sigmoid(a2_left) * utils.sigmoid(a2_right)
+		a2_left = self.w2_left.T * z1_left_b
+		a2_right = self.w2_right.T * z1_right_b
+		a2_leftright = self.w2_leftright.T * z1_leftright_b
+		z2 = m(a2_leftright, sigmoid(a2_left), sigmoid(a2_right))
+		z2_b = np.vstack([z2, b])
 
 		# third layer
-		a3 = self.w3.T * z2
+		a3 = self.w3.T * z2_b
 
-		return a1_left,a1_right,a2_left,a2_leftright,a2_right,a3
+		zs = z1_left_b,z1_right_b,z2_b
+		ass = a1_left,a1_right,a2_left,a2_leftright,a2_right,a3
+		return zs, ass
 
-	def backward_pass(self, ass, t):
+	def backward_pass(self, zs, ass, t):
+		z1_left,z1_right,z2 = zs
 		a1_left,a1_right,a2_left,a2_leftright,a2_right,a3 = ass
 
 		# third layer
-		r3 = utils.sigmoid(a3) - 0.5 * (t + 1)
-		g3 = r3 * z2
+		r3 = (sigmoid(a3) - 0.5 * (t + 1))
+		g3 = r3 * z2.T
 
 		# second layer
-		r2_left = r3 * self.w3 * a2_leftright * utils.sigmoid(a2_left) * utils.sigmoid(-a2_left) * utils.sigmoid(a2_right)
-		r2_right = r3 * self.w3 * a2_leftright * utils.sigmoid(a2_left) * utils.sigmoid(a2_right) * utils.sigmoid(-a2_right)
-		r2_leftright = r3 * self.w3 * utils.sigmoid(a2_left) * utils.sigmoid(a2_right)
-		g2_left = r2_left * z1_left
-		g2_leftright = r2_leftright * np.hstack(z1_left, z1_right)
-		g2_right = r2_right * z1_right
+		r2_left = (r3 * self.w3.T).T * m(a2_leftright, sigmoid(a2_left), sigmoid(-a2_left), sigmoid(a2_right)).T
+		r2_right = (r3 * self.w3.T).T * m(a2_leftright, sigmoid(a2_left), sigmoid(a2_right), sigmoid(-a2_right)).T
+		r2_leftright = (r3 * self.w3.T).T * m(sigmoid(a2_left), sigmoid(a2_right)).T
+		g2_left = r2_left.T * z1_left
+		g2_leftright = r2_leftright.T * np.hstack([z1_left, z1_right])
+		g2_right = r2_right.T * z1_right
 		
 		# first layer
-		r1_left = r2_left * np.hstack(self.w2_left, self.w2_leftright) * utils.dxtanh(np.hstack(a2_left, a2_leftright))
-		r1_right = r2_right * np.hstack(self.w2_leftright, self.w2_right) * utils.dxtanh(np.hstack(a2_leftright, a2_right))
+		w2_left = np.vstack([self.w2_left, self.w2_leftright[:self.H1,:]])
+		w2_right = np.vstack([self.w2_leftright[self.H1:,:], self.w2_right])
+		r1_left = r2_left * w2_left * dxtanh(np.hstack([a1_left, a1_left]))
+		r1_right = r2_right * w2_right * dxtanh(np.hstack([a1_right, a1_right]))
 		g1_left = r1_left * x_left
 		g1_right = r1_right * x_right
 
 		return g1_left,g1_right,g2_left,g2_leftright,g2_right,g3
 
 	def train(self, x_left, x_right, t):
+		x_left = np.matrix(x_left).T
+		x_right = np.matrix(x_right).T
 		b = np.matrix(np.ones([1, x_left.shape[1]])) 
-		print b.shape
-		print x_left.shape
-		x_left_b = np.append(x_left, (np.matrix(np.ones([1, x_left.shape[1]]))))
-		x_right_b = np.append(x_right, (np.matrix(np.ones([1, x_right.shape[1]]))))
-		ass = self.forward_pass(x_left_b, x_right_b)
-		grads = self.backward_pass(ass, t)
+		x_left_b = np.vstack([x_left, b])
+		x_right_b = np.vstack([x_right, b])
+		zs, ass = self.forward_pass(x_left_b, x_right_b)
+		grads = self.backward_pass(zs, ass, t)
 		print ass
 		print grads
 		#self.gradient.descend(grads, 

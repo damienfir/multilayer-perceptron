@@ -8,3 +8,9 @@ def tanh(x):
 
 def dxtanh(x):
 	return 1 - tanh(x) ** 2
+
+def m(*args):
+	tmp = list(args).pop()
+	for i in args:
+		tmp = np.multiply(tmp, i)
+	return tmp
