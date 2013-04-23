@@ -17,7 +17,18 @@ class MLP:
 		self.w2_leftright = rand(2 * H1, H2)
 		self.w2_right = rand(H1, H2)
 		self.w3 = rand(H2, 1)
-
+		self.dim = dimension
+		self.H1 = H1
+		self.H2 = H2
+	
+	def w_add(self, h):
+		self.w1_left += h * np.ones([self.dim, self.H1])
+		self.w1_right += h * np.ones([self.dim, self.H1])
+		self.w2_left += h * np.ones([self.H1, self.H2])
+		self.w2_leftright += h * np.ones([2*self.H1, self.H2])
+		self.w2_right += h * np.ones([self.H1, self.H2])
+		self.w3 += h
+	
 	def forward_pass(self, x_left, x_right):
 		print x_left.shape, x_right.shape
 		# first layer
@@ -66,8 +77,8 @@ class MLP:
 		print x_left.shape
 		x_left_b = np.append(x_left, (np.matrix(np.ones([1, x_left.shape[1]]))))
 		x_right_b = np.append(x_right, (np.matrix(np.ones([1, x_right.shape[1]]))))
-		ass = self.forward_pass(x_left_b, x_right_b)
-		grads = self.backward_pass(ass, t)
-		print ass
-		print grads
+		self.ass = self.forward_pass(x_left_b, x_right_b)
+		self.grads = self.backward_pass(ass, t)
+		print self.ass
+		print self.grads
 		#self.gradient.descend(grads, 
