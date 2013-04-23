@@ -7,7 +7,8 @@ def tanh(x):
 	return np.tanh(x)
 
 def dxtanh(x):
-	return 1 - tanh(x) ** 2
+	tmp = tanh(x)
+	return 1 - m(tmp, tmp)
 
 def m(*args):
 	tmp = list(args).pop()
