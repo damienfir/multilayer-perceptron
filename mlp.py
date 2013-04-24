@@ -47,19 +47,14 @@ class MLP:
 			def __init__(self0, x_left, x_right, t):
 				self0.mlp_plus = self.clone()
 				self0.mlp_minus = self.clone()
-				b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
+				b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
 				self0.x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 				self0.x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
 				self0.t = np.mat(t if not self.binary else t - 2, dtype=np.float)
 				self0.random = np.random.RandomState(1234)
 
 			def compute(self0, h):
-				def logistic_error(res):
-					error = np.sum(np.log(1.0 + np.exp(-self0.t * res[1][-1][0,0])), 1)
-					if isinstance(error, (int, long, float, complex)): return error
-					if isinstance(error[0], (int, long, float, complex)): return error[0]
-					if isinstance(error[0,0], (int, long, float, complex)): return error[0,0]
-					raise Exception("why am I here?? type of error is " + str(type(error)))
+				logistic_error = lambda res: np.sum(np.log(1.0 + np.exp(-self0.t * res[1][-1][0,0])), 1).flat[0]
 				idx = int(self0.random.rand() * 6.0)
 				w_plus,w_minus = self0.mlp_plus.ws[idx],self0.mlp_minus.ws[idx]
 				x,y = int(self0.random.rand() * float(w_plus.shape[0])), int(self0.random.rand() * float(w_plus.shape[1]))
