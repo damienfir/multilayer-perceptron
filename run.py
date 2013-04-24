@@ -6,7 +6,7 @@ import mlp, lstsq, logistic
 path = 'norb/processed_binary.mat'
 keys = ('training_left', 'training_right', 'training_cat')
 stream = streamer.Stream(path, keys, count=10)
-mlp_classifier = mlp.MLP(0.01, 0.1, 20, 10)
+mlp_classifier = mlp.MLP(0.01, 0.1, 1, 1)
 lstsq_classifier = lstsq.LeastSquares(0.1)
 log_classifier = logistic.LogisticLoss(0.01, 0.1)
 
@@ -43,9 +43,9 @@ def train_logistic():
 		log_classifier.train(x_left, x_right, t)
 
 
-#verify_mlp_gradients(100, 100)
-train_logistic()
-x_left, x_right, t = stream.next()
-result = log_classifier.classify(x_left, x_right)
-print "Result =?"
-print np.vstack([t, result])
+verify_mlp_gradients(50, 100)
+# train_logistic()
+# x_left, x_right, t = stream.next()
+# result = log_classifier.classify(x_left, x_right)
+# print "Result =?"
+# print np.vstack([t, result])

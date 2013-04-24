@@ -60,7 +60,8 @@ class MLP:
 					if isinstance(error[0], (int, long, float, complex)): return error[0]
 					if isinstance(error[0,0], (int, long, float, complex)): return error[0,0]
 					raise Exception("why am I here?? type of error is " + str(type(error)))
-				idx = int(self0.random.rand() * 6.0)
+				# idx = int(self0.random.rand() * 6.0)
+				idx = 5
 				w_plus,w_minus = self0.mlp_plus.ws[idx],self0.mlp_minus.ws[idx]
 				x,y = int(self0.random.rand() * float(w_plus.shape[0])), int(self0.random.rand() * float(w_plus.shape[1]))
 
