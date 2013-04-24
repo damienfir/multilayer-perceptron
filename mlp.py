@@ -5,7 +5,7 @@ import numpy as np
 
 class MLP:
 
-	def __init__(self, nu, mu, H1, H2, dimension=576, binary=True, seed=123456789, copy=None):
+	def __init__(self, nu, mu, H1, H2, dimension=576, binary=True, seed=1234567890, copy=None):
 		self.gradient = gradient.Gradient(nu, mu)
 		self.H1 = H1
 		self.H2 = H2
@@ -37,6 +37,7 @@ class MLP:
 		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
 		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
+		t = np.mat(t, dtype=np.float)
 		t = np.mat(t if not self.binary else t - 2, dtype=np.float)
 		zs, ass = self.forward_pass(x_left, x_right)
 		grads = self.backward_pass(zs, ass, x_left, x_right, t)
@@ -47,9 +48,10 @@ class MLP:
 			def __init__(self0, x_left, x_right, t):
 				self0.mlp_plus = self.clone()
 				self0.mlp_minus = self.clone()
-				b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
+				b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
 				self0.x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 				self0.x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
+				t = np.mat(t, dtype=np.float)
 				self0.t = np.mat(t if not self.binary else t - 2, dtype=np.float)
 				self0.random = np.random.RandomState(1234)
 
@@ -89,7 +91,9 @@ class MLP:
 			mlp_result = grads[idx][x,y]
 			if mlp_result: # check non zero for division
 				ratio = abs(mlp_result - result) / abs(mlp_result)
+				print ratio
 				if ratio > (1.0 + h) or ratio < (1.0 - h):
+					#print ratio
 					errors.append((idx, x, y, mlp_result, result))
 		return errors
 
@@ -114,17 +118,14 @@ class MLP:
 		a1_right = self.w1_right * x_right
 
 		z1_left = tanh(a1_left)
-		z1_left_b = np.vstack([z1_left, b])
-
 		z1_right = tanh(a1_right)
+		z1_left_b = np.vstack([z1_left, b])
 		z1_right_b = np.vstack([z1_right, b])
-
-		z1_leftright_b = np.vstack([z1_left, z1_right, b])
 
 		# second layer
 		a2_left = self.w2_left * z1_left_b
 		a2_right = self.w2_right * z1_right_b
-		a2_leftright = self.w2_leftright * z1_leftright_b
+		a2_leftright = self.w2_leftright * np.vstack([z1_left, z1_right, b])
 
 		z2 = m(a2_leftright, sigmoid(a2_left), sigmoid(a2_right))
 		z2_b = np.vstack([z2, b])
@@ -142,7 +143,7 @@ class MLP:
 		diagonalize = lambda mat: np.diagflat(np.sum(mat, 1))
 
 		# third layer
-		r3 = (sigmoid(a3) - 0.5 * (t + 1))
+		r3 = (sigmoid(a3) - 0.5 * (t + 1.0))
 
 		g3 = r3 * z2.T
 

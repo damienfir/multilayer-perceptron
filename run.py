@@ -5,8 +5,8 @@ import mlp, lstsq, logistic
 
 path = 'norb/processed_binary.mat'
 keys = ('training_left', 'training_right', 'training_cat')
-stream = streamer.Stream(path, keys, count=10)
-mlp_classifier = mlp.MLP(0.01, 0.1, 1, 1)
+stream = streamer.Stream(path, keys, count=1)
+mlp_classifier = mlp.MLP(0.01, 0.1, 5, 5)
 lstsq_classifier = lstsq.LeastSquares(0.1)
 log_classifier = logistic.LogisticLoss(0.01, 0.1)
 
