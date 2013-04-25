@@ -31,7 +31,8 @@ class MLP:
 			self.w3 = np.copy(copy.w3)
 
 	def clone(self):
-		return MLP(self.gradient.nu, self.gradient.mu, self.H1, self.H2, self.dim, copy=self)
+		return MLP(self.gradient.nu, self.gradient.mu, self.H1, self.H2,
+			dimension=self.dim, binary=self.binary, copy=self)
 
 	def gradients(self, x_left, x_right, t):
 		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
@@ -42,59 +43,6 @@ class MLP:
 		zs, ass = self.forward_pass(x_left, x_right)
 		grads = self.backward_pass(zs, ass, x_left, x_right, t)
 		return grads
-
-	def directional_gradients(self, _x_left, _x_right, _t):
-		class DirectionalGradientGenerator:
-			def __init__(self0, x_left, x_right, t):
-				self0.mlp_plus = self.clone()
-				self0.mlp_minus = self.clone()
-				b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
-				self0.x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
-				self0.x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
-				t = np.mat(t, dtype=np.float)
-				self0.t = np.mat(t if not self.binary else t - 2, dtype=np.float)
-				self0.random = np.random.RandomState(1234)
-
-			def compute(self0, h):
-				def logistic_error(res):
-					error = np.sum(np.log(1.0 + np.exp(-self0.t * res[1][-1][0,0])), 1)
-					if isinstance(error, (int, long, float, complex)): return error
-					if isinstance(error[0], (int, long, float, complex)): return error[0]
-					if isinstance(error[0,0], (int, long, float, complex)): return error[0,0]
-					raise Exception("why am I here?? type of error is " + str(type(error)))
-				# idx = int(self0.random.rand() * 6.0)
-				idx = 4
-				w_plus,w_minus = self0.mlp_plus.ws[idx],self0.mlp_minus.ws[idx]
-				x,y = int(self0.random.rand() * float(w_plus.shape[0])), int(self0.random.rand() * float(w_plus.shape[1]))
-
-				# pertubate weight vectors
-				w_plus[x,y] = w_plus[x,y] + h
-				w_minus[x,y] = w_minus[x,y] - h
-
-				# compute gradient
-				r_plus = logistic_error(self0.mlp_plus.forward_pass(self0.x_left, self0.x_right))
-				r_minus = logistic_error(self0.mlp_minus.forward_pass(self0.x_left, self0.x_right))
-
-				# reset weight vectors for next time
-				w_plus[x,y] = w_plus[x,y] - h
-				w_minus[x,y] = w_minus[x,y] + h
-				return idx, x, y, (r_plus - r_minus) / (2.0 * h)
-
-		return DirectionalGradientGenerator(_x_left, _x_right, _t)
-
-	def verify(self, x_left, x_right, t, h=1e-8, count=100):
-		grads = self.gradients(x_left, x_right, t)
-		directionals = self.directional_gradients(x_left, x_right, t)
-		errors = []
-		for _ in xrange(0, count):
-			idx,x,y,result = directionals.compute(h)
-			mlp_result = grads[idx][x,y]
-			if mlp_result: # check non zero for division
-				ratio = abs(mlp_result - result) / abs(mlp_result)
-				print ratio
-				if ratio > h:
-					errors.append((idx, x, y, mlp_result, result))
-		return errors
 
 	@property
 	def ws(self):
@@ -142,8 +90,7 @@ class MLP:
 		diagonalize = lambda mat: np.diagflat(np.sum(mat, 1))
 
 		# third layer
-		r3 = (sigmoid(a3) - 0.5 * (t + 1.0))
-
+		r3 = sigmoid(a3) - np.float(0.5) * (t + np.float(1.0))
 		g3 = r3 * z2.T
 
 		# second layer
