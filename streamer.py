@@ -39,3 +39,11 @@ class Stream:
 		for key in self.keys:
 			result.append(self.data[key][:,:])
 		return tuple(result)
+
+	@property
+	def size(self):
+		if self.direction == 'horizontal':
+			size = self.data[self.keys[0]].shape[1]
+		else:
+			size = self.data[self.keys[0]].shape[0]
+		return size
