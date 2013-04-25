@@ -16,7 +16,7 @@ def verify_mlp_gradients(inputs, count):
 	all_errors = []
 	for _ in xrange(0, inputs):
 		x_left, x_right, t = stream.next()
-		errors = mlp_classifier.verify(x_left, x_right, t, count=count)
+		errors = mlp_classifier.verify(x_left, x_right, t, count=count, h=1e-7)
 		all_errors.extend(errors)
 	print "[DONE]"
 	if all_errors:
@@ -43,7 +43,7 @@ def train_logistic():
 		log_classifier.train(x_left, x_right, t)
 
 
-verify_mlp_gradients(50, 100)
+verify_mlp_gradients(100, 100)
 # train_logistic()
 # x_left, x_right, t = stream.next()
 # result = log_classifier.classify(x_left, x_right)
