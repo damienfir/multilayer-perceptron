@@ -1,6 +1,7 @@
 import sys
 import mlp
 import streamer
+from utils import *
 import numpy as np
 
 # easily tunable params
@@ -10,7 +11,7 @@ h = 1e-7
 
 path = 'norb/processed_binary.mat'
 keys = ('training_left', 'training_right', 'training_cat')
-stream = streamer.Stream(path, keys, count=1)
+stream = streamer.Stream(path, keys, count=10)
 classifier = mlp.MLP(0.01, 0.1, 10, 10)
 
 class DirectionalGradientGenerator:
@@ -27,11 +28,12 @@ class DirectionalGradientGenerator:
 
 	def compute(self, h):
 		def logistic_error(res):
-			x = - self.t * res[1][-1][0,0]
-			return np.sum(x + np.log(1.0 + np.exp(-x)), 1).flat[0]
+			x = m(- self.t, res[1][-1])
+			neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
+			pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
+			return neg + pos
 		#logistic_error = lambda res: np.sum(np.log(1.0 + np.exp(-self0.t * res[1][-1][0,0])), 1).flat[0]
 		idx = int(self.random.rand() * 6.0)
-		idx = 5
 		w_plus,w_minus = self.mlp_plus.ws[idx],self.mlp_minus.ws[idx]
 		x,y = int(self.random.rand() * float(w_plus.shape[0])), int(self.random.rand() * float(w_plus.shape[1]))
 
@@ -59,7 +61,7 @@ for _ in xrange(0, inputs):
 	for _ in xrange(0, count):
 		idx,x,y,result = directionals.compute(h)
 		mlp_result = grads[idx][x,y]
-		if mlp_result: # maybe check if above threshold
+		if mlp_result > 0.01 or abs(mlp_result - result) > 0.01:
 			ratio = abs(mlp_result - result) / abs(mlp_result)
 			if ratio > h:
 				errors.append((idx, x, y, mlp_result, result))
@@ -69,7 +71,9 @@ if errors:
 	print "Errors found:"
 	for idx, x, y, mlp_result, result in errors:
 		print "ws[" + str(idx) + "][" + str(x) + "," + str(y) + "] ->",
-		print "mlp gradient of " + str(mlp_result) + " vs directional of " + str(result)
-	print "Total:", len(errors)
+		print "mlp gradient of", mlp_result, "vs directional of", result,
+		print "diff =", abs(mlp_result - result)
+	print "Total:", len(errors), "out of",
 else:
-	print "No errors uncovered after " + str(count) + " random directions in " + str(inputs) + " inputs"
+	print "No errors uncovered after",
+print count, "random directions in", inputs, "inputs =>", count * inputs, "tests"

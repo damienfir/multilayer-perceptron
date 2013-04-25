@@ -71,8 +71,8 @@ class MLP:
 
 		# second layer
 		a2_left = self.w2_left * z1_left_b
-		a2_right = self.w2_right * z1_right_b
 		a2_leftright = self.w2_leftright * np.vstack([z1_left, z1_right, b])
+		a2_right = self.w2_right * z1_right_b
 
 		z2 = m(a2_leftright, sigmoid(a2_left), sigmoid(a2_right))
 		z2_b = np.vstack([z2, b])
@@ -87,30 +87,30 @@ class MLP:
 	def backward_pass(self, zs, ass, x_left, x_right, t):
 		z1_left,z1_right,z2 = zs
 		a1_left,a1_right,a2_left,a2_leftright,a2_right,a3 = ass
-		diagonalize = lambda mat: np.diagflat(np.sum(mat, 1))
 
 		# third layer
 		r3 = sigmoid(a3) - np.float(0.5) * (t + np.float(1.0))
 		g3 = r3 * z2.T
 
 		# second layer
-		r2_left = diagonalize(m(a2_leftright, dxsigmoid(a2_left), sigmoid(a2_right))) * self.w3[:,:-1].T * r3
-		r2_right = diagonalize(m(a2_leftright, sigmoid(a2_left), dxsigmoid(a2_right))) * self.w3[:,:-1].T * r3
-		r2_leftright = diagonalize(m(sigmoid(a2_left), sigmoid(a2_right))) * self.w3[:,:-1].T * r3
+		w3_r3 = self.w3[:,:-1].T * r3
+		r2_left = m(a2_leftright, dxsigmoid(a2_left), sigmoid(a2_right), w3_r3)
+		r2_leftright = m(sigmoid(a2_left), sigmoid(a2_right), w3_r3)
+		r2_right = m(a2_leftright, sigmoid(a2_left), dxsigmoid(a2_right), w3_r3)
 
 		g2_left = r2_left * z1_left.T
 		g2_leftright = r2_leftright * np.vstack([z1_left[:-1,:], z1_right]).T
 		g2_right = r2_right * z1_right.T
 
 		# first layer
-		a1_left_diagonal = diagonalize(dxtanh(a1_left))
-		r1_left_left = a1_left_diagonal * self.w2_left[:,:-1].T * r2_left
-		r1_left_leftright = a1_left_diagonal * self.w2_leftright[:,:self.H1].T * r2_leftright
+		dxtanh_a1_left = dxtanh(a1_left)
+		r1_left_left = m(dxtanh_a1_left, self.w2_left[:,:-1].T * r2_left)
+		r1_left_leftright = m(dxtanh_a1_left, self.w2_leftright[:,:self.H1].T * r2_leftright)
 		r1_left = r1_left_left + r1_left_leftright
 
-		a1_right_diagonal = diagonalize(dxtanh(a1_right))
-		r1_right_right = a1_right_diagonal * self.w2_right[:,:-1].T * r2_right
-		r1_right_leftright = a1_right_diagonal * self.w2_leftright[:,self.H1:-1].T * r2_leftright
+		dxtanh_a1_right = dxtanh(a1_right)
+		r1_right_right = m(dxtanh_a1_right, self.w2_right[:,:-1].T * r2_right)
+		r1_right_leftright = m(dxtanh_a1_right, self.w2_leftright[:,self.H1:-1].T * r2_leftright)
 		r1_right = r1_right_right + r1_right_leftright
 
 		g1_left = r1_left * x_left.T
@@ -122,3 +122,11 @@ class MLP:
 		grads = self.gradients(x_left, x_right, t)
 		ws = self.gradient.descend(grads, self.ws)
 		self.update_ws(ws)
+
+	def classify(self, x_left, x_right):
+		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
+		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
+		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
+		_, ass = self.forward_pass(x_left, x_right)
+		return ass[-1]
+

@@ -16,6 +16,7 @@ class LogisticLoss:
 		X = np.mat(np.vstack([x_lefts, x_rights, np.ones(x_lefts.shape[1])]), dtype=np.float)
 		t = np.mat(np.vstack(map(lambda k: ts == k, range(1, self.k + 1))), dtype=np.float)
 		grads = (sigmoid(self.ws * X) - t) * X.T
+		print grads.shape, self.ws.shape
 		self.ws = self.gradient.descend(grads, self.ws)
 
 	def classify(self, x_left, x_right):
