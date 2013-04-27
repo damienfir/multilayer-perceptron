@@ -5,9 +5,15 @@ class Gradient:
 	def __init__(self, nu, mu):
 		self.nu = nu
 		self.mu = mu
+		self.descents = 0
 		self.previous = None
 
 	def descend(self, gradients, ws):
+		self.descents += 1
+		if hasattr(self.nu, '__call__'):
+			nu = self.nu(self.descents)
+		else:
+			nu = self.nu
 		if not (type(gradients) is list or type(gradients) is tuple):
 			gradients = [gradients]
 			ws = [ws]
@@ -24,7 +30,7 @@ class Gradient:
 
 		def update_wk(args):
 			gradient,previous,w = args
-			delta_wk = -self.nu * (1 - self.mu) * gradient + self.mu * previous
+			delta_wk = -nu * (1 - self.mu) * gradient + self.mu * previous
 			return (w + delta_wk, delta_wk)
 		new = map(update_wk, zip(gradients, self.previous, ws))
 		result,previous = map(lambda x: x[0], new), map(lambda x: x[1], new)

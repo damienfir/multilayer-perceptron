@@ -16,7 +16,7 @@ def stream_binary():
 def validations_binary():
 	path = 'norb/processed_binary.mat'
 	keys = ('validation_left', 'validation_right', 'validation_cat')
-	return streamer.Stream(path, keys, count=block_size)
+	return streamer.Stream(path, keys)
 
 def stream_5class():
 	path = 'norb/processed_5class.mat'
@@ -26,22 +26,23 @@ def stream_5class():
 def validations_5class():
 	path = 'norb/processed_5class.mat'
 	keys = ('validation_left', 'validation_right', 'validation_cat')
-	return streamer.Stream(path, keys, count=block_size)
+	return streamer.Stream(path, keys)
 
-def classify(classifier, validations):
+def classify(classifier, validations, equals):
 	errors = 0.0
 	for _ in xrange(0, validations.size):
 		x_left, x_right, t = validations.next()
 		result = classifier.classify(x_left, x_right)
-		if result != t:
+		print t, result
+		if not equals(t, result):
 			errors += 1.0
-	print "Success rate =", errors / float(validations.size)
+	print "Success rate =", 100 * (1.0 - errors / float(validations.size))
 
 def classify_binary(classifier):
-	classify(classifier, validations_binary())
+	classify(classifier, validations_binary(), lambda t,res: t - 2.0 == res) 
 
 def classify_5class(classifier):
-	classify(classifier, validations_5class())
+	classify(classifier, validations_5class(), lambda t,res: t == res)
 
 def test_mlp_binary():
 	stream = stream_binary()
@@ -64,3 +65,4 @@ def test_logistic():
 	classify_5class(log_classifier)
 
 test_mlp_binary()
+

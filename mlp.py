@@ -5,12 +5,15 @@ import numpy as np
 
 class MLP:
 
-	def __init__(self, nu, mu, H1, H2, dimension=576, binary=True, seed=1234567890, copy=None):
+	def __init__(self, H1, H2, nu=0.01, mu=0.1, k=5, dimension=576, seed=1234567890, copy=None):
 		self.gradient = gradient.Gradient(nu, mu)
 		self.H1 = H1
 		self.H2 = H2
 		self.dim = dimension
-		self.binary = binary
+		self.k = k
+		self.binary = k == 2
+		if k < 2:
+			raise Exception(str(k) + "-way classification makes no sense")
 		if copy == None:
 			random = np.random.RandomState(seed)
 			def rand(dim1, dim2):
@@ -21,7 +24,7 @@ class MLP:
 			self.w2_left = rand(H2, H1)
 			self.w2_leftright = rand(H2, 2 * H1)
 			self.w2_right = rand(H2, H1)
-			self.w3 = rand(1, H2)
+			self.w3 = rand(1, H2) if self.binary else rand(k, H2)
 		else:
 			self.w1_left = np.copy(copy.w1_left)
 			self.w1_right = np.copy(copy.w1_right)
@@ -31,15 +34,17 @@ class MLP:
 			self.w3 = np.copy(copy.w3)
 
 	def clone(self):
-		return MLP(self.gradient.nu, self.gradient.mu, self.H1, self.H2,
-			dimension=self.dim, binary=self.binary, copy=self)
+		return MLP(self.H1, self.H2, nu=self.gradient.nu, mu=self.gradient.mu,
+			k=self.k, dimension=self.dim, copy=self)
 
 	def gradients(self, x_left, x_right, t):
 		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
 		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
-		t = np.mat(t, dtype=np.float)
-		t = np.mat(t if not self.binary else t - 2, dtype=np.float)
+		if self.binary:
+			t = np.mat(t, dtype=np.float) - 2.0 # normalize t in between -1 and +1 in the binary case
+		else:
+			t = np.mat(np.vstack(map(lambda k: t == k, range(0, self.k))), dtype=np.float)
 		zs, ass = self.forward_pass(x_left, x_right)
 		grads = self.backward_pass(zs, ass, x_left, x_right, t)
 		return grads
@@ -58,7 +63,7 @@ class MLP:
 		self.w3 = w3
 	
 	def forward_pass(self, x_left, x_right):
-		b = np.mat(np.ones([1, x_left.shape[1]])) 
+		b = np.mat(np.ones([1, x_left.shape[1]]), dtype=np.float) 
 
 		# first layer
 		a1_left = self.w1_left * x_left
@@ -89,7 +94,11 @@ class MLP:
 		a1_left,a1_right,a2_left,a2_leftright,a2_right,a3 = ass
 
 		# third layer
-		r3 = sigmoid(a3) - np.float(0.5) * (t + np.float(1.0))
+		if self.binary:
+			r3 = sigmoid(a3) - np.float(0.5) * (t + np.float(1.0))
+		else:
+			#r3 = sigmoid(a3) - t
+			r3 = a3 - t # we want to minimize squared error, so we use the simpler formula
 		g3 = r3 * z2.T
 
 		# second layer
@@ -128,5 +137,25 @@ class MLP:
 		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
 		_, ass = self.forward_pass(x_left, x_right)
-		return ass[-1]
+		if self.binary:
+			result = np.sign(ass[-1])
+		else:
+			result = np.argmax(ass[-1], 0)
+		return result
 
+	def error(self, x_left, x_right, t):
+		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
+		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
+		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
+		_, ass = self.forward_pass(x_left, x_right)
+		if self.binary:
+			t = np.mat(t, dtype=np.float) - 2.0 # normalize t in between -1 and +1 in the binary case
+			x = m(-t, ass[-1])
+			neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
+			pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
+			error = neg + pos
+		else:
+			t = np.mat(np.vstack(map(lambda k: t == k, range(0, self.k))), dtype=np.float)
+			x = ass[-1] - t
+			error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
+		return error
