@@ -33,16 +33,18 @@ def classify(classifier, validations, equals):
 	for _ in xrange(0, validations.size):
 		x_left, x_right, t = validations.next()
 		result = classifier.classify(x_left, x_right)
-		print t, result
+		# print t, result
 		if not equals(t, result):
 			errors += 1.0
-	print "Success rate =", 100 * (1.0 - errors / float(validations.size))
+	avg_error = errors / float(validations.size)
+	# print "Success rate =", 100 * (1.0 - avg_error)
+	return avg_error
 
 def classify_binary(classifier):
-	classify(classifier, validations_binary(), lambda t,res: t - 2.0 == res) 
+	return classify(classifier, validations_binary(), lambda t,res: t - 2.0 == res) 
 
 def classify_5class(classifier):
-	classify(classifier, validations_5class(), lambda t,res: t == res)
+	return classify(classifier, validations_5class(), lambda t,res: t == res)
 
 def test_mlp_binary():
 	stream = stream_binary()
