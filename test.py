@@ -1,66 +1,34 @@
 import sys
-import numpy as np
+import numpy as np, scipy.io
+import mlp
 import streamer
-import mlp, lstsq, logistic
+from utils import *
 
-block_size = 10
-mlp_classifier = mlp.MLP(0.01, 0.1, 10, 10)
-lstsq_classifier = lstsq.LeastSquares(0.1)
-log_classifier = logistic.LogisticLoss(0.01, 0.1)
+classifier = mlp.MLP(0.01, 0.1, 10, 10)
 
-def stream_binary():
-	path = 'norb/processed_binary.mat'
-	keys = ('training_left', 'training_right', 'training_cat')
-	return streamer.Stream(path, keys, count=block_size)
+path = 'norb/processed_binary.mat'
+keys = ('training_left', 'training_right', 'training_cat')
+training = streamer.Stream(path, keys, count=10)
 
-def validations_binary():
-	path = 'norb/processed_binary.mat'
-	keys = ('validation_left', 'validation_right', 'validation_cat')
-	return streamer.Stream(path, keys, count=block_size)
+path = 'norb/norb_binary.mat'
+keys = ('test_left_s', 'test_right_s', 'test_cat_s')
+testing = streamer.Stream(path, keys)
 
-def stream_5class():
-	path = 'norb/processed_5class.mat'
-	keys = ('training_left', 'training_right', 'training_cat')
-	return streamer.Stream(path, keys, count=block_size)
+mat = scipy.io.loadmat('norb/processed_binary.mat')
+mean_left, sigma_left = map(lambda x: np.mat(x).T, mat['params_left'])
+mean_right, sigma_right = map(lambda x: np.mat(x).T, mat['params_right'])
 
-def validations_5class():
-	path = 'norb/processed_5class.mat'
-	keys = ('validation_left', 'validation_right', 'validation_cat')
-	return streamer.Stream(path, keys, count=block_size)
+for _ in xrange(0, 100):
+	x_left, x_right, t = training.next()
+	classifier.train(x_left, x_right, t)
 
-def classify(classifier, validations):
-	errors = 0.0
-	for _ in xrange(0, validations.size):
-		x_left, x_right, t = validations.next()
-		result = classifier.classify(x_left, x_right)
-		if result != t:
-			errors += 1.0
-	print "Success rate =", errors / float(validations.size)
+errors = 0.0
+for _ in xrange(0, testing.size):
+	x_left, x_right, t = testing.next()
+	x_left = m(1.0 / sigma_left, x_left - mean_left)
+	x_right = m(1.0 / sigma_right, x_right - mean_right)
+	result = classifier.classify(x_left, x_right)
+	if float(t) - 2 != result:
+		errors += 1.0
+print "Success rate =", 100 * (1.0 - errors / float(testing.size))
 
-def classify_binary(classifier):
-	classify(classifier, validations_binary())
-
-def classify_5class(classifier):
-	classify(classifier, validations_5class())
-
-def test_mlp_binary():
-	stream = stream_binary()
-	for _ in xrange(0, 100):
-		x_left, x_right, t = stream.next()
-		mlp_classifier.train(x_left, x_right, t)
-	classify_binary(mlp_classifier)
-
-def test_least_squares():
-	stream = stream_5class()
-	x_left, x_right, t = stream.all()
-	lstsq_classifier.train(x_left, x_right, t)
-	classify_5class(lstsq_classifier)
-
-def test_logistic():
-	stream = stream_5class()
-	for _ in xrange(0, 100):
-		x_left, x_right, t = stream.next()
-		log_classifier.train(x_left, x_right, t)
-	classify_5class(log_classifier)
-
-test_mlp_binary()

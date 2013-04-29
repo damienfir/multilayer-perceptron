@@ -12,27 +12,19 @@ h = 1e-7
 path = 'norb/processed_binary.mat'
 keys = ('training_left', 'training_right', 'training_cat')
 stream = streamer.Stream(path, keys, count=10)
-classifier = mlp.MLP(0.01, 0.1, 10, 10)
+classifier = mlp.MLP(10, 10, k=2)
 
 class DirectionalGradientGenerator:
 
 	def __init__(self, x_left, x_right, t):
 		self.mlp_plus = classifier.clone()
 		self.mlp_minus = classifier.clone()
-		b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
-		self.x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
-		self.x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
-		t = np.mat(t, dtype=np.float)
-		self.t = np.mat(t if not classifier.binary else t - 2, dtype=np.float)
+		self.x_left = x_left
+		self.x_right = x_right
+		self.t = t
 		self.random = np.random.RandomState(1234)
 
 	def compute(self, h):
-		def logistic_error(res):
-			x = m(- self.t, res[1][-1])
-			neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
-			pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
-			return neg + pos
-		#logistic_error = lambda res: np.sum(np.log(1.0 + np.exp(-self0.t * res[1][-1][0,0])), 1).flat[0]
 		idx = int(self.random.rand() * 6.0)
 		w_plus,w_minus = self.mlp_plus.ws[idx],self.mlp_minus.ws[idx]
 		x,y = int(self.random.rand() * float(w_plus.shape[0])), int(self.random.rand() * float(w_plus.shape[1]))
@@ -42,8 +34,8 @@ class DirectionalGradientGenerator:
 		w_minus[x,y] = w_minus[x,y] - h
 
 		# compute gradient
-		r_plus = logistic_error(self.mlp_plus.forward_pass(self.x_left, self.x_right))
-		r_minus = logistic_error(self.mlp_minus.forward_pass(self.x_left, self.x_right))
+		r_plus = self.mlp_plus.error(self.x_left, self.x_right, self.t)
+		r_minus = self.mlp_minus.error(self.x_left, self.x_right, self.t)
 
 		# reset weight vectors for next time
 		w_plus[x,y] = w_plus[x,y] - h

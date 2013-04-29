@@ -28,10 +28,10 @@ def normalize(array):
 	sigma_minus = 1.0 / sigma
 	sigma_minus_matrix = np.tile(sigma_minus, (n, 1)).transpose()
 	normalized_matrix = sigma_minus_matrix * mean_difference
-	return normalized_matrix
+	return normalized_matrix, mean, sigma
 
-norb_normalized_left = normalize(norb_training_left)
-norb_normalized_right = normalize(norb_training_right)
+norb_normalized_left, mean_left, sigma_left = normalize(norb_training_left)
+norb_normalized_right, mean_right, sigma_right = normalize(norb_training_right)
 
 # split data into training and validation sets
 training_count = int(2.0 * norb_train_cat.size / 3.0)
@@ -50,13 +50,15 @@ final_validation_cat = norb_train_cat[:,validation_indices]
 
 # write normalized and split data back to file for future use
 data = {
+	'params_left': [mean_left, sigma_left],
+	'params_right': [mean_right, sigma_right],
 	'training_left': final_training_left,
 	'training_right': final_training_right,
 	'training_cat': final_training_cat,
 	'validation_left': final_validation_left,
 	'validation_right': final_validation_right,
 	'validation_cat': final_validation_cat
-}	
+}
 
 basename = os.path.basename(path)
 dirname = os.path.dirname(os.path.abspath(path))
