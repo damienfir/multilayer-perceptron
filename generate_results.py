@@ -17,7 +17,7 @@ def lstsq_error():
 	print avg_errors
 
 
-def mlp_binary_error():
+def mlp_binary_errors():
 	mlp_classifier = mlp.MLP(10, 10, 0.01, 0.1, k=2)
 	training = test.stream_binary()
 	validations = test.validations_binary()
@@ -32,8 +32,11 @@ def mlp_binary_error():
 		errors, class_errors = mlp_classifier.error(*validations.all())
 		validation_errors = np.append(validation_errors, errors)
 		classification_errors = np.append(classification_errors, class_errors)
-	npoints = np.cumsum(npoints)
-	store = np.vstack([npoints, training_errors, validation_errors, classification_errors])
-	np.savetxt('results/mlp_binary.txt',store)
+	store = np.vstack([np.cumsum(npoints), training_errors, validation_errors, classification_errors])
+	np.savetxt('results/mlp_binary.txt', store)
 
-mlp_binary_error()
+
+def mlp_binary_comparative():
+	pass
+
+mlp_binary_errors()

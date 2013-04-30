@@ -154,7 +154,7 @@ class MLP:
 			neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
 			pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
 			error = neg + pos
-			classerror = -np.sum(np.sign(x[x<0])) / t.shape[1]
+			classerror = np.sum(np.sign(x[x>=0])) / t.shape[1]
 		else:
 			t = np.mat(np.vstack(map(lambda k: t == k, range(0, self.k))), dtype=np.float)
 			x = ass[-1] - t
