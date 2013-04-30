@@ -4,7 +4,7 @@ import random
 
 class Stream:
 
-	def __init__(self, path, keys, count=1, direction='horizontal'):
+	def __init__(self, path, keys, count=1, direction='horizontal', map=None):
 		self.data = scipy.io.loadmat(path)
 		self.keys = keys
 		self.count = count
@@ -14,6 +14,7 @@ class Stream:
 		self.looped = False
 		self.read = 0
 		self.indices = range(self.size)
+		self.map = (lambda key,x: x) if map == None else map
 		random.shuffle(self.indices)
 
 	def __getitem__(self, idx):
@@ -23,9 +24,9 @@ class Stream:
 		result = []
 		for key in self.keys:
 			if self.direction == 'horizontal':
-				read = self.data[key][:,idx:idx+1]
+				read = self.map(key, self.data[key][:,idx:idx+1])
 			else:
-				read = self.data[key][idx:idx+1,:]
+				read = self.map(key, self.data[key][idx:idx+1,:])
 			result.append(read)
 		return tuple(result)
 
@@ -44,16 +45,16 @@ class Stream:
 			self.looped = False
 		for key in self.keys:
 			if self.direction == 'horizontal':
-				read = self.data[key][:,indices]
+				read = self.map(key, self.data[key][:,indices])
 			else:
-				read = self.data[key][indices,:]
+				read = self.map(key, self.data[key][indices,:])
 			result.append(read)
 		return tuple(result)
 
 	def all(self):
 		result = []
 		for key in self.keys:
-			result.append(self.data[key][:,:])
+			result.append(self.map(key, self.data[key][:,:]))
 		return tuple(result)
 
 	@property
