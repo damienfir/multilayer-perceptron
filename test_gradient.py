@@ -1,7 +1,6 @@
 import sys
 import mlp
-import streamer
-from utils import *
+import stream_utils as streams
 import numpy as np
 
 # easily tunable params
@@ -9,9 +8,7 @@ inputs = 100
 count = 100
 h = 1e-7
 
-path = 'norb/processed_binary.mat'
-keys = ('training_left', 'training_right', 'training_cat')
-stream = streamer.Stream(path, keys, count=10)
+stream = streams.training_binary(count=10)
 classifier = mlp.MLP(10, 10, k=2)
 
 class DirectionalGradientGenerator:
@@ -34,8 +31,8 @@ class DirectionalGradientGenerator:
 		w_minus[x,y] = w_minus[x,y] - h
 
 		# compute gradient
-		r_plus = self.mlp_plus.error(self.x_left, self.x_right, self.t)
-		r_minus = self.mlp_minus.error(self.x_left, self.x_right, self.t)
+		r_plus, _ = self.mlp_plus.error(self.x_left, self.x_right, self.t)
+		r_minus, _ = self.mlp_minus.error(self.x_left, self.x_right, self.t)
 
 		# reset weight vectors for next time
 		w_plus[x,y] = w_plus[x,y] - h

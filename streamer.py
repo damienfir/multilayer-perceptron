@@ -14,7 +14,7 @@ class Stream:
 		self.looped = False
 		self.read = 0
 		self.indices = range(self.size)
-		self.map = lambda key,x: x if map == None else map
+		self.map = (lambda key,x: x) if map == None else map
 		random.shuffle(self.indices)
 
 	def __getitem__(self, idx):

@@ -1,4 +1,5 @@
 import numpy as np
+from utils import *
 
 class LeastSquares:
 
@@ -7,10 +8,7 @@ class LeastSquares:
 		self.k = k
 
 	def train(self, x_lefts, x_rights, ts):
-		x_lefts = np.mat(x_lefts, dtype=np.float)
-		x_rights = np.mat(x_rights, dtype=np.float)
 		X = np.mat(np.vstack([x_lefts, x_rights, np.ones(x_lefts.shape[1])]), dtype=np.float).T
-		t = np.mat(np.vstack(map(lambda k: ts == k, range(1, self.k + 1))), dtype=np.float).T
 		A = X.T * X + self.v * np.diagflat(np.ones(X.shape[1]))
 		b = X.T * t
 
@@ -19,8 +17,13 @@ class LeastSquares:
 		self.ws = ws
 
 	def classify(self, x_left, x_right):
-		x_left = np.mat(x_left, dtype=np.float)
-		x_right = np.mat(x_right, dtype=np.float)
 		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
-		result = np.argmax(X.T * self.ws, 1)
-		return (result + 1).T
+		return np.argmax(X.T * self.ws, 1).T
+
+	def error(self, x_left, x_right, t):
+		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
+		result = (X.T * self.ws).T
+		x = result - t
+		error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
+		classerror = np.sum(np.argmax(result, 0) != np.argmax(t, 0), 0).flat[0]
+		return error, classerror
