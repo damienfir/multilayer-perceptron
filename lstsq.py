@@ -10,7 +10,7 @@ class LeastSquares:
 	def train(self, x_lefts, x_rights, ts):
 		X = np.mat(np.vstack([x_lefts, x_rights, np.ones(x_lefts.shape[1])]), dtype=np.float).T
 		A = X.T * X + self.v * np.diagflat(np.ones(X.shape[1]))
-		b = X.T * t
+		b = X.T * ts.T
 
 		# use numpy to solve the least squares normal equations problem
 		ws, _, _, _ = np.linalg.lstsq(A, b)

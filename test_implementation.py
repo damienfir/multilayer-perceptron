@@ -10,23 +10,20 @@ mlp_classifier = mlp.MLP(0.01, 0.1, 10, 10)
 lstsq_classifier = lstsq.LeastSquares(0.1)
 log_classifier = logistic.LogisticLoss(0.01, 0.1)
 
-def classify(classifier, validations, equals):
+def classify(classifier, validations):
 	errors = 0.0
 	for _ in xrange(0, validations.size):
 		x_left, x_right, t = validations.next()
-		result = classifier.classify(x_left, x_right)
-		# print t, result
-		if not equals(t, result):
-			errors += 1.0
+		error, classerror = classifier.error(x_left, x_right, t)
+		errors += error
 	avg_error = errors / float(validations.size)
-	# print "Success rate =", 100 * (1.0 - avg_error)
-	return avg_error
+	print "Average error =", avg_error
 
 def classify_binary(classifier):
-	return classify(classifier, streams.validation_binary(), lambda t,res: t - 2.0 == res) 
+	return classify(classifier, streams.validation_binary())
 
 def classify_5class(classifier):
-	return classify(classifier, streams.validation_5class(), lambda t,res: t == res)
+	return classify(classifier, streams.validation_5class())
 
 def test_mlp_binary():
 	stream = streams.training_binary(count=block_size)
@@ -48,5 +45,5 @@ def test_logistic():
 		log_classifier.train(x_left, x_right, t)
 	classify_5class(log_classifier)
 
-test_mlp_binary()
+test_least_squares()
 
