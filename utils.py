@@ -14,8 +14,8 @@ def dxtanh(x):
 	tmp = tanh(x)
 	return np.float(1.0) - m(tmp, tmp)
 
-def lsexp(v):
-	return np.log(np.sum(np.exp(v), 1))
+def lsexp(v, direction=0):
+	return np.log(np.sum(np.exp(v), direction))
 
 def m(*args):
 	args = list(args)

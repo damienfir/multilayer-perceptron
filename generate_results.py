@@ -9,7 +9,7 @@ def lstsq_model_selection():
 	print '-- Least Squares Regression ----------- :'
 	splits = 10
 	seed = 123456
-	model_params = np.arange(0.0,21*2e-2,2e-2)
+	model_params = np.arange(0.0,21*5e-2,5e-2)
 	model_testing_errors = np.empty(shape=(model_params.size, 1 + splits))
 	model_testing_classerrors = np.empty(shape=(model_params.size, 1 + splits))
 	for i,v in enumerate(model_params):
