@@ -4,7 +4,7 @@ import gradient
 
 class LogisticLoss:
 
-	def __init__(self, nu, mu, dimension=576, k=5, seed=12345):
+	def __init__(self, nu, mu, dimension=576, k=5, seed=123456):
 		self.gradient = gradient.Gradient(nu, mu)
 		self.k = 5
 		self.dimension = dimension
@@ -14,26 +14,30 @@ class LogisticLoss:
 	def clone(self):
 		classifier = LogisticLoss(self.gradient.nu, self.gradient.mu,
 			dimension=self.dimension, k=self.k)
-		classifier.ws = self.ws
+		classifier.ws = np.copy(self.ws)
 		return classifier
 
-	def train(self, x_left, x_right, t):
-		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
+	def gradients(self, x_left, x_right, t):
+		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
+		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
 		grads = (sigmoid(self.ws * X) - t) * X.T
+		return grads
+
+	def train(self, x_left, x_right, t):
+		grads = self.gradients(x_left, x_right, t)
 		self.ws = self.gradient.descend(grads, self.ws)
 
 	def classify(self, x_left, x_right):
-		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
+		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
+		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
 		result = np.argmax(self.ws * X, 0)
 		return result
 
 	def error(self, x_left, x_right, t):
-		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
+		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
+		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
 		result = self.ws * X
-		x = m(-t, result)
-		neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
-		pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
-		error = neg + pos
+		error = np.sum(lsexp(result, 0) - np.sum(m(t, result), 0), 1).flat[0]
 		classerror = np.sum(np.argmax(result, 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror
 

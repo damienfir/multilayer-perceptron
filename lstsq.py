@@ -9,7 +9,7 @@ class LeastSquares:
 
 	def clone(self):
 		classifier = LeastSquares(self.v, k=self.k)
-		classifier.ws = self.ws
+		classifier.ws = np.copy(self.ws)
 		return classifier
 
 	def train(self, x_lefts, x_rights, ts):
