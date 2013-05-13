@@ -57,6 +57,8 @@ def mlp_5class_errors():
 def mlp_binary_comparative():
 	pass
 
-# mlp_binary_errors()
-mlp_5class_errors()
+
+mlp_binary_errors()
+# mlp_5class_errors()
 # lstsq_errors()
+
