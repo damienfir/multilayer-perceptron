@@ -5,7 +5,7 @@ import numpy as np
 
 class MLP:
 
-	def __init__(self, H1, H2, nu=0.01, mu=0.1, k=5, dimension=576, seed=1234567890, copy=None):
+	def __init__(self, H1, H2, nu=0.01, mu=0.1, k=5, dimension=576, seed=1234567890):
 		self.gradient = gradient.Gradient(nu, mu)
 		self.H1 = H1
 		self.H2 = H2
@@ -14,28 +14,27 @@ class MLP:
 		self.binary = k == 2
 		if k < 2:
 			raise Exception(str(k) + "-way classification makes no sense")
-		if copy == None:
-			random = np.random.RandomState(seed)
-			def rand(dim1, dim2):
-				# We use dim2 + 1 here to model the b variable
-				return (1.0 / dim1) * np.mat(random.randn(dim1, dim2 + 1), dtype=np.float)
-			self.w1_left = rand(H1, dimension)
-			self.w1_right = rand(H1, dimension)
-			self.w2_left = rand(H2, H1)
-			self.w2_leftright = rand(H2, 2 * H1)
-			self.w2_right = rand(H2, H1)
-			self.w3 = rand(1, H2) if self.binary else rand(k, H2)
-		else:
-			self.w1_left = np.copy(copy.w1_left)
-			self.w1_right = np.copy(copy.w1_right)
-			self.w2_left = np.copy(copy.w2_left)
-			self.w2_leftright = np.copy(copy.w2_leftright)
-			self.w2_right = np.copy(copy.w2_right)
-			self.w3 = np.copy(copy.w3)
+		random = np.random.RandomState(seed)
+		def rand(dim1, dim2):
+			# We use dim2 + 1 here to model the b variable
+			return (1.0 / dim1) * np.mat(random.randn(dim1, dim2 + 1), dtype=np.float)
+		self.w1_left = rand(H1, dimension)
+		self.w1_right = rand(H1, dimension)
+		self.w2_left = rand(H2, H1)
+		self.w2_leftright = rand(H2, 2 * H1)
+		self.w2_right = rand(H2, H1)
+		self.w3 = rand(1, H2) if self.binary else rand(k, H2)
 
 	def clone(self):
-		return MLP(self.H1, self.H2, nu=self.gradient.nu, mu=self.gradient.mu,
-			k=self.k, dimension=self.dim, copy=self)
+		classifier = MLP(self.H1, self.H2, nu=self.gradient.nu,
+			mu=self.gradient.mu, k=self.k, dimension=self.dim)
+		classifier.w1_left = np.copy(self.w1_left)
+		classifier.w1_right = np.copy(self.w1_right)
+		classifier.w2_left = np.copy(self.w2_left)
+		classifier.w2_leftright = np.copy(self.w2_leftright)
+		classifier.w2_right = np.copy(self.w2_right)
+		classifier.w3 = np.copy(self.w3)
+		return classifier
 
 	def gradients(self, x_left, x_right, t):
 		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
@@ -140,7 +139,7 @@ class MLP:
 		return result
 
 	def error(self, x_left, x_right, t):
-		b = np.mat(np.ones([1, np.mat(x_left).shape[1]])) 
+		b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
 		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
 		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
 		_, ass = self.forward_pass(x_left, x_right)
@@ -149,9 +148,22 @@ class MLP:
 			neg = np.sum(np.log(1.0 + np.exp(x[x<0])), 1).flat[0]
 			pos = np.sum(x[x>=0] + np.log(1.0 + np.exp(-x[x>=0])), 1).flat[0]
 			error = neg + pos
-			classerror = -np.sum(np.sign(x[x<0])) / t.shape[1]
+			classerror = np.sum(np.sign(x[x>0]))
 		else:
 			x = ass[-1] - t
 			error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
-			classerror = np.sum(np.argmax(ass[-1], 0) != np.argmax(t, 0), 0).flat[0]
+			classerror = np.sum(np.argmax(ass[-1], 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror
+
+	def normalized_error(self, *args):
+		if len(args) == 1:
+			x_left, x_right, t = args[0].all()
+			size = float(args[0].size)
+		elif len(args) == 3:
+			x_left, x_right, t = args
+			size = float(x_left.shape[1])
+		else: raise Exception("Can't run error on weird args " + str(args))
+		error, classerror = self.error(x_left, x_right, t)
+		normalized_error = float(error) / size
+		normalized_classerror = float(classerror) / size
+		return normalized_error, normalized_classerror

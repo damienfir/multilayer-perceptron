@@ -4,63 +4,65 @@ import random
 
 class Stream:
 
-	def __init__(self, path, keys, count=1, direction='horizontal', map=None):
-		self.data = scipy.io.loadmat(path)
-		self.keys = keys
-		self.count = count
-		self.direction = direction
-		if self.direction != 'horizontal' and self.direction != 'vertical':
-			raise Exception("unknown direction " + str(self.direction))
-		self.looped = False
+	def __init__(self, data, direction='horizontal', indices=None):
+		if type(data) is tuple:
+			self.data = data
+		elif type(data) is list:
+			self.data = tuple(data)
+		else:
+			self.data = (data,)
+		if direction == 'horizontal':
+			self.direction = 'h'
+		elif direction == 'vertical':
+			self.direction = 'v'
+		else:
+			raise Exception("unknown direction " + str(direction))
+		if indices != None:
+			self.indices = indices
+		else:
+			if self.direction == 'h':
+				size = self.data[0].shape[1]
+			else:
+				size = self.data[0].shape[0]
+			self.indices = range(size)
+			random.shuffle(self.indices)
 		self.read = 0
-		self.indices = range(self.size)
-		self.map = (lambda key,x: x) if map == None else map
-		random.shuffle(self.indices)
 
 	def __getitem__(self, idx):
 		if not type(idx) is int:
 			raise Exception("unkown index type: " + str(type(idx)))
 		idx = self.indices[idx]
 		result = []
-		for key in self.keys:
-			if self.direction == 'horizontal':
-				read = self.map(key, self.data[key][:,idx:idx+1])
-			else:
-				read = self.map(key, self.data[key][idx:idx+1,:])
+		for col in self.data:
+			read = col[:,idx:idx+1] if self.direction == 'h' else col[idx:idx+1,:]
 			result.append(read)
 		return tuple(result)
 
-	def next(self):
-		result = []
-		if self.read + self.count > self.size:
+	def next(self,count=1):
+		if self.read + count > self.size:
 			first = self.indices[self.read:]
 			random.shuffle(self.indices)
-			self.read = (self.read + self.count) - self.size
+			self.read = (self.read + count) - self.size
 			last = self.indices[:self.read]
 			indices = first + last
 			self.looped = True
 		else:
-			indices = self.indices[self.read:self.read + self.count]
-			self.read = self.read + self.count
+			indices = self.indices[self.read:self.read + count]
+			self.read = self.read + count
 			self.looped = False
-		for key in self.keys:
-			if self.direction == 'horizontal':
-				read = self.map(key, self.data[key][:,indices])
-			else:
-				read = self.map(key, self.data[key][indices,:])
+		result = []
+		for col in self.data:
+			read = col[:,indices] if self.direction == 'h' else col[indices,:]
 			result.append(read)
 		return tuple(result)
 
 	def all(self):
 		result = []
-		for key in self.keys:
-			result.append(self.map(key, self.data[key][:,:]))
+		for col in self.data:
+			read = col[:,self.indices] if self.direction == 'h' else col[self.indices,:]
+			result.append(read)
 		return tuple(result)
 
 	@property
 	def size(self):
-		if self.direction == 'horizontal':
-			size = self.data[self.keys[0]].shape[1]
-		else:
-			size = self.data[self.keys[0]].shape[0]
-		return size
+		return len(self.indices)
