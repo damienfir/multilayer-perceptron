@@ -8,7 +8,7 @@ inputs = 100
 count = 100
 h = 1e-7
 
-stream = streams.training_binary(count=10)
+stream = streams.training_binary()
 classifier = mlp.MLP(10, 10, k=2)
 
 class DirectionalGradientGenerator:
@@ -44,7 +44,7 @@ sys.stdout.flush()
 
 errors = []
 for _ in xrange(0, inputs):
-	x_left, x_right, t = stream.next()
+	x_left, x_right, t = stream.next(count=10)
 	grads = classifier.gradients(x_left, x_right, t)
 	directionals = DirectionalGradientGenerator(x_left, x_right, t)
 	for _ in xrange(0, count):

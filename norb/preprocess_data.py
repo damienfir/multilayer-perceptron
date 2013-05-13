@@ -33,31 +33,13 @@ def normalize(array):
 norb_normalized_left, mean_left, sigma_left = normalize(norb_training_left)
 norb_normalized_right, mean_right, sigma_right = normalize(norb_training_right)
 
-# split data into training and validation sets
-training_count = int(2.0 * norb_train_cat.size / 3.0)
-indices = range(norb_train_cat.size)
-random.shuffle(indices) # shuffle in place
-training_indices = indices[:training_count]
-validation_indices = indices[training_count:]
-
-final_training_left = norb_normalized_left[:,training_indices]
-final_training_right = norb_normalized_right[:,training_indices]
-final_training_cat = norb_train_cat[:,training_indices]
-
-final_validation_left = norb_normalized_left[:,validation_indices]
-final_validation_right = norb_normalized_right[:,validation_indices]
-final_validation_cat = norb_train_cat[:,validation_indices]
-
 # write normalized and split data back to file for future use
 data = {
 	'params_left': [mean_left, sigma_left],
 	'params_right': [mean_right, sigma_right],
-	'training_left': final_training_left,
-	'training_right': final_training_right,
-	'training_cat': final_training_cat,
-	'validation_left': final_validation_left,
-	'validation_right': final_validation_right,
-	'validation_cat': final_validation_cat
+	'x_left': norb_normalized_left,
+	'x_right': norb_normalized_right,
+	't': norb_train_cat
 }
 
 basename = os.path.basename(path)
