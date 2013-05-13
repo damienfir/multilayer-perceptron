@@ -29,8 +29,12 @@ def lstsq_model_selection():
 	np.savetxt('results/lstsq_errors.txt', model_testing_errors)
 	np.savetxt('results/lstsq_classerrors.txt', model_testing_classerrors)
 
-def cartesian(x, y):
-	return numpy.dstack(numpy.meshgrid(x, y)).reshape(-1, 2)
+def cartesian(arrays):
+	return np.dstack(np.meshgrid(*arrays)).reshape(-1, 2)
+
+def cartesian3(nus,mus,counts):
+	return np.array([((nu,nu_repr),mu,count) for count in counts for mu in mus for (nu,nu_repr) in nus])
+
 
 nus = np.array([
 	('0.01', 0.01), ('0.02', 0.02), ('0.05', 0.05), ('1/x', lambda x: 1.0/float(x)), ('1/10x', lambda x: 0.1/float(x)),
@@ -40,7 +44,7 @@ nus = np.array([
 ])
 mus = np.arange(0.05, 5*0.05, 0.05)
 counts = np.array([1, 2, 5, 10, 20, 50])
-#gradient_model_params = cartesian(nus, mus, counts)
+gradient_model_params = cartesian3(nus, mus, counts)
 
 def logistic_descent_model_selection():
 	seed = 123541
@@ -127,4 +131,4 @@ def mlp_5class_model_selection():
 		model_testing[i] = [H1, H2, error, classerror]
 	np.savetxt('result/mlp_5class.txt', model_testing)
 
-lstsq_model_selection()
+mlp_binary_descent_model_selection()

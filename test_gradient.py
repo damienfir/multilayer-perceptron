@@ -2,6 +2,7 @@ import sys
 import mlp
 import stream_utils as streams
 import numpy as np
+import logistic
 
 # easily tunable params
 inputs = 100
@@ -9,7 +10,8 @@ count = 100
 h = 1e-7
 
 stream = streams.training_binary()
-classifier = mlp.MLP(10, 10, k=2)
+# classifier = mlp.MLP(10, 10, k=2)
+classifier = logistic.LogisticLoss(0.01,0.1)
 
 class DirectionalGradientGenerator:
 
