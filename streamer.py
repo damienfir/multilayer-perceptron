@@ -58,6 +58,7 @@ class Stream:
 
 	def all(self):
 		result = []
+		self.looped = True
 		for col in self.data:
 			read = col[:,self.indices] if self.direction == 'h' else col[self.indices,:]
 			result.append(read)

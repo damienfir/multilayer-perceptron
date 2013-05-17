@@ -101,13 +101,13 @@ def mlp_binary_model_selection():
 	seed = 293482934
 	print '-- Binary MLP ------------------------- :'
 	H1s = H2s = np.arange(10,9*10,10)
-	model_params = cartesian(H1s, H2s)
+	model_params = cartesian([H1s, H2s])
 	model_testing = np.empty(shape=(model_params.size, 4))
 	for i,(H1,H2) in enumerate(model_params):
 		print ' - Generating for params (H1,H2)        :', H1, H2
 		classifier = mlp.MLP(H1, H2, k=2)
 		training, validation = streams.validation_binary(seed=seed)
-		trained, _, _ = early_stopping.run(training, validation, classifier, count=10)
+		trained, _, _ = early_stopping.run(training, validation, classifier, count=10, max_time=100)
 		error, classerror = trained.normalized_error(validation)
 		print '   errors                               :', error
 		print '   classification errors                :', classerror
@@ -131,4 +131,4 @@ def mlp_5class_model_selection():
 		model_testing[i] = [H1, H2, error, classerror]
 	np.savetxt('result/mlp_5class.txt', model_testing)
 
-mlp_binary_descent_model_selection()
+mlp_binary_model_selection()
