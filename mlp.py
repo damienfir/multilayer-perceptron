@@ -151,6 +151,8 @@ class MLP:
 			classerror = np.sum(np.sign(x[x>0]))
 		else:
 			x = ass[-1] - t
+			print t
+			# print ass[-1]
 			error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
 			classerror = np.sum(np.argmax(ass[-1], 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror

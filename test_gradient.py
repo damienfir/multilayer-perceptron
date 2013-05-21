@@ -2,6 +2,7 @@ import sys
 import mlp, logistic
 import stream_utils as streams
 import numpy as np
+import logistic
 
 class DirectionalGradientGenerator:
 
@@ -92,6 +93,6 @@ def verify_logistic():
 	classifier = logistic.LogisticLoss(0.01, 0.1)
 	verify(stream, classifier)
 
-verify_binary_mlp()
-verify_5class_mlp()
+# verify_binary_mlp()
+# verify_5class_mlp()
 verify_logistic()
