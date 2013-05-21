@@ -126,9 +126,5 @@ def mlp_5class_model_selection():
 		model_testing[i] = [H1, H2, error, classerror]
 	np.savetxt('result/mlp_5class.txt', model_testing)
 
-<<<<<<< HEAD
 logistic_descent_model_selection()
 #mlp_binary_descent_model_selection()
-=======
-mlp_binary_model_selection()
->>>>>>> f3181968c001572fa0bc3e849f3f1cad04630e2c
