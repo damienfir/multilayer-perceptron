@@ -1,6 +1,6 @@
 import datetime
 
-def run(training_stream, validation_stream, classifier, count=10, max_time=6000):
+def run(training_stream, validation_stream, classifier, count=10, max_time=300):
 	stop = False
 	saved = None
 	all_errors = last_errors = []
@@ -9,7 +9,8 @@ def run(training_stream, validation_stream, classifier, count=10, max_time=6000)
 		x_left, x_right, t = training_stream.next(count)
 		classifier.train(x_left, x_right, t)
 		if training_stream.looped:
-			error, _ = classifier.error(validation_stream)
+			error, _ = classifier.normalized_error(validation_stream)
+			print error
 			all_errors = all_errors + [error]
 
 			# save errors to check for function climbing
