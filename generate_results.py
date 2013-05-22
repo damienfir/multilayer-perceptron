@@ -4,6 +4,27 @@ import stream_utils as streams
 import early_stopping
 import mlp, lstsq, logistic
 
+def lstsq_interval_selection():
+	print '-- Least Squares Regression ----------- :'
+	splits = 10
+	seed = 123456
+	model_params = np.concatenate([[0.0], 0.05 * np.exp2(np.arange(0, 10))])
+	model_testing_errors = np.empty(shape=(model_params.size, 1 + splits))
+	for i,v in enumerate(model_params):
+		print ' - Generating for param (v)             :', v
+		classifier = lstsq.LeastSquares(v)
+		errors = classerrors = []
+		for s,(training_stream,validation_stream) in enumerate(streams.cross_validation_5class(splits=splits, seed=seed)):
+			print '   -> cross validation                  :', s+1, '/', splits
+			x_left, x_right, t = training_stream.all()
+			classifier.train(x_left, x_right, t)
+			error, classerror = classifier.normalized_error(validation_stream)
+			errors = errors + [error]
+		print '   average error                        :', float(sum(errors)) / float(len(errors))
+		model_testing_errors[i] = [v] + errors
+	np.savetxt('results/lstsq_interval.txt', model_testing_errors)
+
+
 def lstsq_model_selection():
 	print '-- Least Squares Regression ----------- :'
 	splits = 10
@@ -42,10 +63,15 @@ nus = np.array([
 	(8, lambda x: 0.01/pow(float(x),0.5)), (9, lambda x: 1.0/pow(float(x),0.33)),
 	(10, lambda x: 0.1/pow(float(x),0.33)), (11, lambda x: 0.01/pow(float(x),0.33))
 ])
+# nus = np.array([
+# 	('0.01', 0.01), ('0.02', 0.02), ('0.05', 0.05), ('1/x', lambda x: 1.0/float(x)), ('1/10x', lambda x: 0.1/float(x)),
+# 	('1/100x', lambda x: 0.01/float(x)), ('1/sqrt(x)', lambda x: 1.0/pow(float(x),0.5)), ('1/10sqrt(x)', lambda x: 0.1/pow(float(x),0.5)),
+# 	('1/100sqrt(x)', lambda x: 0.01/pow(float(x),0.5)), ('1/cbrt(x)', lambda x: 1.0/pow(float(x),0.33)),
+# 	('1/10cbrt(x)', lambda x: 0.1/pow(float(x),0.33)), ('1/100cbrt(x)', lambda x: 0.01/pow(float(x),0.33))
+# ])
 mus = np.arange(0.05, 5*0.05, 0.05)
 counts = np.array([1, 2, 5, 10, 20, 50])
 gradient_model_params = [((nu_repr,nu),mu,count) for nu_repr,nu in nus for mu in mus for count in counts]
-
 
 def get_results(fname, n=1):
 	data = np.loadtxt(fname)
@@ -151,7 +177,7 @@ def mlp_binary_model_selection():
 		print '   classification errors                :', classerror
 		model_testing[i] = [nu, H1, H2, error, classerror]
 		np.savetxt(fname, model_testing)
-	best = get_results(fname)
+	best = get_results(fname, 5)
 	print "binary parameters:", best
 
 def mlp_5class_model_selection():

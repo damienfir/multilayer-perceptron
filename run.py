@@ -3,20 +3,16 @@ import numpy as np, scipy.io
 import mlp
 import stream_utils as streams
 import lstsq
+import early_stopping
 
-# classifier = mlp.MLP(100, 100, nu=0.01)
-classifier = lstsq.LeastSquares(1e-3, 5)
-training = streams.training_5class()
-validation = streams.validation_5class()
 
-stop = False
-while not stop:
-	x_left, x_right, t = training.next()
-	classifier.train(x_left, x_right, t)
-	if training.looped:
-		training_error,_ = classifier.error(*training.all())
-		validation_error,_ = classifier.error(*validation.all())
-		#training_error, training_size = compute_error_rate(training.all())
-		#validation_error, validation_size = compute_error_rate(validation.all())
-		print "Training error:", np.sum(training_error, 0), "out of", training.size,
-		print "Validation error:", np.sum(validation_error, 0), "out of", validation.size
+error = []
+
+for i in range(10):
+	classifier = mlp.MLP(20,50, nu=1e-3, mu=1e-1, k=5)
+	training, validation = streams.validation_5class()
+	testing = streams.testing_5class()
+	trained, errors, seconds = early_stopping.run(training,validation,classifier,max_time=60)
+	out = trained.normalized_error(testing)
+	error.append(out)
+	np.savetxt('mlp2_testing.txt', np.array(error))

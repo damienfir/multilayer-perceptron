@@ -27,7 +27,7 @@ def run(training_stream, validation_stream, classifier, count=10, max_time=300):
 				last_errors = [min(last_errors), error]
 
 			# if we notice we are climbing, stop training
-			if len(last_errors) > 3 or error == 0:
+			if len(last_errors) > 5 or error == 0:
 				stop = True
 
 			# if we have taken too long, stop training
