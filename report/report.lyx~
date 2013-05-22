@@ -84,8 +84,32 @@ Spring 2013
 Introduction
 \end_layout
 
+\begin_layout Standard
+Pattern classification and machine learning provide us with a large set
+ of powerful tools and techniques.
+ The sheer number and the diversity of these tools can make selecting the
+ ideal technique for a given problem quite difficult.
+ We could simply decide we want to use the best techniques available to
+ make sure our system is optimal, but with complexity comes time consumption.
+ Therefore, when using an elaborate tool to solve a classification problem,
+ it is generally useful to make sure it actually performs better than a
+ simpler technique.
+ This project compares the Multi Layer Preceptron technique against Least
+ Squares Estimation and Logistic Regression on the NORB dataset.
+\end_layout
+
 \begin_layout Section*
 Methods
+\end_layout
+
+\begin_layout Standard
+The theory places gradient descent in batch mode above stochastic online
+ descent in terms of the optimality of each update.
+ We therefore implemented partial (or mini) batch mode with varying batch
+ size to compare their actual impact on convergence speed and final error
+ rate.
+ We implemented this feature in our MLP and Logistic Regression classifiers
+ since they are both based on gradient descent.
 \end_layout
 
 \begin_layout Subsection*
@@ -105,15 +129,115 @@ Mutli-way MLP
 \end_layout
 
 \begin_layout Paragraph*
-Logistic regression
+Logistic Regression
 \end_layout
 
 \begin_layout Paragraph*
-Linear regression
+Least Squares Estimation
+\end_layout
+
+\begin_layout Standard
+The model selection process for the Least Squares Estimation technique was
+ by far the simplest since we were dealing with a single parameter and a
+ constant convergence time.
+ We initially got a feeling for plausible values by setting the Tikhonov
+ regularizer to the exponential range 
+\begin_inset Formula $\left\{ 0\right\} \cup\left\{ 0.05*\sum_{k=0}^{9}2^{k}\right\} $
+\end_inset
+
+ (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lstsq_interval"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename lstsq_interval.png
+	width 10cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Interval selection for Tikhonov regularization parameter.
+\begin_inset CommandInset label
+LatexCommand label
+name "lstsq_interval"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Once we had singled out a suitable interval, we performed a more precise
+ search by resorting to a linear parameter space of 
+\begin_inset Formula $\left\{ 0.05*x\mid x\in\mathbb{N\wedge}0\leq x<25\right\} $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We can clearly place the optimal regularizer at 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+$v = 0.6$
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section*
 Results and Discussion
+\end_layout
+
+\begin_layout Paragraph*
+Binary MLP
+\end_layout
+
+\begin_layout Paragraph
+Mutli-way MLP
+\end_layout
+
+\begin_layout Paragraph*
+Logistic Regression
+\end_layout
+
+\begin_layout Paragraph*
+Least Squares Estimation
 \end_layout
 
 \end_body

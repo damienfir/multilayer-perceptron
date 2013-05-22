@@ -4,6 +4,26 @@ import stream_utils as streams
 import early_stopping
 import mlp, lstsq, logistic
 
+def lstsq_interval_selection():
+	print '-- Least Squares Regression ----------- :'
+	splits = 10
+	seed = 123456
+	model_params = np.concatenate([[0.0], 0.05 * np.exp2(np.arange(0, 10))])
+	model_testing_errors = np.empty(shape=(model_params.size, 1 + splits))
+	for i,v in enumerate(model_params):
+		print ' - Generating for param (v)             :', v
+		classifier = lstsq.LeastSquares(v)
+		errors = classerrors = []
+		for s,(training_stream,validation_stream) in enumerate(streams.cross_validation_5class(splits=splits, seed=seed)):
+			print '   -> cross validation                  :', s+1, '/', splits
+			x_left, x_right, t = training_stream.all()
+			classifier.train(x_left, x_right, t)
+			error, classerror = classifier.normalized_error(validation_stream)
+			errors = errors + [error]
+		print '   average error                        :', float(sum(errors)) / float(len(errors))
+		model_testing_errors[i] = [v] + errors
+	np.savetxt('results/lstsq_interval.txt', model_testing_errors)
+
 def lstsq_model_selection():
 	print '-- Least Squares Regression ----------- :'
 	splits = 10
@@ -126,5 +146,6 @@ def mlp_5class_model_selection():
 		model_testing[i] = [H1, H2, error, classerror]
 	np.savetxt('result/mlp_5class.txt', model_testing)
 
-logistic_descent_model_selection()
+lstsq_interval_selection()
+#logistic_descent_model_selection()
 #mlp_binary_descent_model_selection()
