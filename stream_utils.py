@@ -94,7 +94,7 @@ def testing_binary(count=None, seed=None):
 	data = map(lambda key: data_map(key, all_data[key]), keys)
 	return streamer.Stream(data, indices=indices)
 
-def testing_5class(count=1):
+def testing_5class(count=None, seed=None):
 	path = 'norb/norb_5class.mat'
 	keys = ('test_left_s', 'test_right_s', 'test_cat_s')
 	all_data = scipy.io.loadmat(path)

@@ -14,9 +14,6 @@ def run(training_stream, validation_stream, classifier, count=10, max_time=300):
 			error, _ = classifier.normalized_error(validation_stream)
 			all_errors = all_errors + [error]
 
-			grad = classifier.gradients(x_left, x_right, t)
-			print "gradients: ", np.sqrt(sum(map(lambda x: np.sum(np.array(x)**2), grad)))
-
 			# save errors to check for function climbing
 			if not last_errors or error < min(last_errors):
 				last_errors = [error]
@@ -27,15 +24,15 @@ def run(training_stream, validation_stream, classifier, count=10, max_time=300):
 				last_errors = [min(last_errors), error]
 
 			# if we notice we are climbing, stop training
-			if len(last_errors) > 3 or error == 0:
+			if len(last_errors) > 5 or error == 0:
 				stop = True
 
 			# if we have taken too long, stop training
 			current_time = datetime.datetime.now()
-			print "errors:", last_errors
-			print "time:  ", (current_time - start_time).seconds
 			if (current_time - start_time).seconds > max_time:
 				stop = True
+
+			print error
 
 	current_time = datetime.datetime.now()
 	seconds = (current_time - start_time).seconds

@@ -124,16 +124,62 @@ Model and parameters
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
 Logistic Regression
 \end_layout
 
+\begin_layout Standard
+The Logistic Regression technique doesn't have any model parameters, but
+ it relies on gradient descent which does (namely the learning rate 
+\begin_inset Formula $\eta$
+\end_inset
+
+, momentum term 
+\begin_inset Formula $\mu$
+\end_inset
+
+, and the mini-batch size).
+ Unfortunately, as in the MLP case, it is difficult to perform standard
+ model selection on these parameters.
+\end_layout
+
+\begin_layout Standard
+After having manually determined plausible parameter combinations, we performed
+ model selection by comparing convergence speed and final error rate, resulting
+ in an optimal strategy of ...
+\end_layout
+
 \begin_layout Paragraph*
 Least Squares Estimation
+\end_layout
+
+\begin_layout Standard
+The analytical solution to the Least Squares Estimation with Tikhonov Regulariza
+tion problem is obtained by solving the normal equations problem.
+ In the case of multi-way classification, the solution is trivially extended
+ by solving the equations for each of the k vectors obtained by using 
+\emph on
+1 of K
+\emph default
+ encoding for the target vector 
+\series bold
+\emph on
+t
+\series default
+\emph default
+.
+ But this also means we multiply the impact of the Tikhonov regularizer
+ by k.
+ To compensate for this, we modified the regularized error function slightly
+ : 
+\begin_inset Formula 
+\[
+E(\mathbf{W})=\frac{1}{2}\sum_{i=1}^{N}\parallel\mathbf{y}(\mathbf{x}_{i})-\mathbf{\tilde{t}}_{i}\parallel^{2}+\frac{1}{k}\frac{\nu}{2}\sum_{k=1}^{K}\parallel\mathbf{w}_{k}\parallel^{2}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -145,10 +191,10 @@ The model selection process for the Least Squares Estimation technique was
 \begin_inset Formula $\left\{ 0\right\} \cup\left\{ 0.05*\sum_{k=0}^{9}2^{k}\right\} $
 \end_inset
 
- (see 
+ (see Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "lstsq_interval"
+reference "fig:lstsq_interval"
 
 \end_inset
 
@@ -164,8 +210,8 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename lstsq_interval.png
-	width 10cm
+	filename lstsq_interval.pdf
+	width 80col%
 
 \end_inset
 
@@ -176,10 +222,11 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Interval selection for Tikhonov regularization parameter.
+Interval selection for Tikhonov regularization parameter computed by performing
+ 10-fold cross-validation.
 \begin_inset CommandInset label
 LatexCommand label
-name "lstsq_interval"
+name "fig:lstsq_interval"
 
 \end_inset
 
@@ -197,16 +244,23 @@ name "lstsq_interval"
 \end_layout
 
 \begin_layout Standard
-Once we had singled out a suitable interval, we performed a more precise
- search by resorting to a linear parameter space of 
+Once we had singled out a suitable interval, namely 
+\begin_inset Formula $\left[0;1.2\right]$
+\end_inset
+
+, we performed a more precise search by resorting to a linear parameter
+ space of 
 \begin_inset Formula $\left\{ 0.05*x\mid x\in\mathbb{N\wedge}0\leq x<25\right\} $
 \end_inset
 
-.
-\end_layout
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:lstsq_errors"
 
-\begin_layout Standard
-We can clearly place the optimal regularizer at 
+\end_inset
+
+) and we can thus place the optimal regularizer at 
 \begin_inset ERT
 status open
 
@@ -220,6 +274,143 @@ $v = 0.6$
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename lstsq_errors.pdf
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tikhonov_a"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename lstsq_classerrors.pdf
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tikhonov_b"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Error function value (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tikhonov_a"
+
+\end_inset
+
+) and classification error rate (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tikhonov_b"
+
+\end_inset
+
+) during parameter selection for Tikhonov regularizer computed as during
+ interval selection.
+ We can clearly see the curve minimum around 0.5 (the actual minimum is at
+ 0.6).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:lstsq_errors"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Mutli-way MLP
+\end_layout
+
 \begin_layout Section*
 Results and Discussion
 \end_layout
@@ -228,24 +419,16 @@ Results and Discussion
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
-<<<<<<< HEAD
 Logistic Regression
 \end_layout
 
 \begin_layout Paragraph*
 Least Squares Estimation
-=======
-Logistic regression
 \end_layout
 
-\begin_layout Paragraph*
-Linear regression
->>>>>>> fd3dc27e559a31deed7767a6d08f71a87c64a475
+\begin_layout Paragraph
+Mutli-way MLP
 \end_layout
 
 \end_body

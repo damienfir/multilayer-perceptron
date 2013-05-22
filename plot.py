@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import csv
-=======
 import datetime
 import sys
-
->>>>>>> fd3dc27e559a31deed7767a6d08f71a87c64a475
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -16,24 +12,35 @@ import mlp
 import lstsq
 import logistic
 
+results = 'results/'
+plots = 'plots/'
 
 def plot_lstsq_errors():
 	print "-- Plotting Least Squares Errors -------------------- :"
 	data = np.loadtxt(results + 'lstsq_interval.txt')
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
-	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=70)
-	plt.savefig(plots + 'lstsq_interval.png')
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('squared error')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_interval.pdf')
 	data = np.loadtxt(results + 'lstsq_errors.txt')
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
-	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=70)
-	plt.savefig(plots + 'lstsq_errors.png')
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('squared error')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_errors.pdf')
 	data = np.loadtxt(results + 'lstsq_classerrors.txt')
 	plt.figure()
 	plt.boxplot(data[:,1:].T)
-	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=70)
-	plt.savefig(plots + 'lstsq_classerrors.png')
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('classification error rate')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_classerrors.pdf')
 	print " +---> DONE"
 
 def plot_logistic_errors():
@@ -53,7 +60,7 @@ def plot_logistic_errors():
 			ax.set_xticks(range(len(nus)))
 			ax.set_xticklabels(nus)
 			ax.plot_wireframe(X, Y, Z, rstride=1, cstride=1)
-			plt.savefig(plots + 'logistic_descent_' + str(cnt) + '.png')
+			plt.savefig(plots + 'logistic_descent_' + str(cnt) + '.pdf')
 		plot_for_count('1')
 		plot_for_count('2')
 		plot_for_count('5')
@@ -63,7 +70,7 @@ def plot_logistic_errors():
 	print " +---> DONE"
 
 plot_lstsq_errors()
-plot_logistic_errors()
+#plot_logistic_errors()
 
 #def plot_mlp_errors(fname):
 #	data = np.loadtxt(results + fname+'.txt')
@@ -96,16 +103,16 @@ def plot_errors_lstsq():
 	pass
 
 def plot_all():
-	# plot_errors('plots/errors_mlp2.txt')
+	#plot_errors('plots/errors_mlp2.txt')
 	plot_errors('plots/errors_mlp5.txt')
-	# plot_errors('plots/errors_logistic.txt')
+	#plot_errors('plots/errors_logistic.txt')
 
 
-def generate_errors(classifier):
+def generate_errors(classifier, streams):
 	max_time = 10
 	out = np.zeros((4,0))
 	start_time = datetime.datetime.now()
-	training, validation = streams.validation_binary()
+	training, validation = streams
 	stop = False
 	while not stop:
 		x_left, x_right, t = training.next(20)
@@ -124,15 +131,15 @@ def generate_errors(classifier):
 	return out
 	
 def generate_errors_mlp2():
-	d = generate_errors(mlp.MLP(10,10, nu=1e-4, mu=1e-1))
+	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(training_ratio=0.05, count=100))
 	np.savetxt('plots/errors_mlp2.txt', d)
 
 def generate_errors_mlp5():
-	d = generate_errors(mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5))
+	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=5), streams.validation_5class(training_ratio=0.5, count=100))
 	np.savetxt('plots/errors_mlp5.txt', d)
 
 def generate_errors_logistic():
-	d = generate_errors(logistic.LogisticLoss(nu=1e-3,mu=1e-1))
+	d = generate_errors(logistic.LogisticLoss(nu=1e-3,mu=1e-1), streams.validation_5class())
 	np.savetxt('plots/errors_logistic.txt', d)
 
 def generate_errors_lstsq():
@@ -148,11 +155,11 @@ def generate_errors_lstsq():
 	print avg_errors
 
 def generate_all():
-	# generate_errors_mlp2()
+	#generate_errors_mlp2()
 	generate_errors_mlp5()
-	# generate_errors_logistic()
-	# generate_errors_lstsq()
+	#generate_errors_logistic()
+	#generate_errors_lstsq()
 
 
-# generate_all()
-plot_all()
+#generate_all()
+#plot_all()

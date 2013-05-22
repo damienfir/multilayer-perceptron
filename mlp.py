@@ -5,7 +5,7 @@ import numpy as np
 
 class MLP:
 
-	def __init__(self, H1, H2, nu=0.01, mu=0.1, k=5, dimension=576, seed=1234567890):
+	def __init__(self, H1, H2, nu=0.01, mu=0.1, k=5, dimension=576, seed=None):
 		self.gradient = gradient.Gradient(nu, mu)
 		self.H1 = H1
 		self.H2 = H2
