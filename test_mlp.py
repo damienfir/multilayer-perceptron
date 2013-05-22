@@ -14,10 +14,10 @@ while True:
 	count = 10
 	max_time = 100
 	while not stop:
-		x_left, x_right, t = training_stream.all()
+		x_left, x_right, t = training_stream.next(10)
 		classifier.train(x_left, x_right, t)
 		if training_stream.looped:
-			error, _ = classifier.normalized_error(validation_stream)
+			error, classerror = classifier.normalized_error(validation_stream)
 			all_errors = all_errors + [error]
 
 			grad = classifier.gradients(x_left, x_right, t)
@@ -38,8 +38,8 @@ while True:
 
 			# if we have taken too long, stop training
 			current_time = datetime.datetime.now()
-			print "errors:", last_errors
-			print "time:  ", (current_time - start_time).seconds
+			# print "errors:", last_errors
+			# print "time:  ", (current_time - start_time).seconds
 			# if (current_time - start_time).seconds > max_time:
 			# 	stop = True
 

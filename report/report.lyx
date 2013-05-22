@@ -100,16 +100,16 @@ Model and parameters
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
 Logistic regression
 \end_layout
 
 \begin_layout Paragraph*
 Linear regression
+\end_layout
+
+\begin_layout Paragraph
+Mutli-way MLP
 \end_layout
 
 \begin_layout Section*
@@ -120,16 +120,16 @@ Results and Discussion
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
 Logistic regression
 \end_layout
 
 \begin_layout Paragraph*
 Linear regression
+\end_layout
+
+\begin_layout Paragraph
+Mutli-way MLP
 \end_layout
 
 \end_body
