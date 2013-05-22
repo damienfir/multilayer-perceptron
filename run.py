@@ -3,6 +3,7 @@ import numpy as np, scipy.io
 import mlp
 import stream_utils as streams
 import lstsq
+import early_stopping
 
 errors = classerrors = []
 for i in range(0, 10):

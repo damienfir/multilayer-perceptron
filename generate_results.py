@@ -24,6 +24,7 @@ def lstsq_interval_selection():
 		model_testing_errors[i] = [v] + errors
 	np.savetxt('results/lstsq_interval.txt', model_testing_errors)
 
+
 def lstsq_model_selection():
 	print '-- Least Squares Regression ----------- :'
 	splits = 10
@@ -51,15 +52,37 @@ def lstsq_model_selection():
 def cartesian(arrays):
 	return np.dstack(np.meshgrid(*arrays)).reshape(-1, 2)
 
+def cartesian3(nus,mus,counts):
+	return np.array([(nu,mu,count) for count in counts for mu in mus for nu in nus])
+
+
+nus_repr = ['0.01','0.02','0.05','1/x','1/10x','1/100x','1/sqrt(x)','1/10sqrt(x)','1/100sqrt(x)','1/cbrt(x)','1/10cbrt(x)','1/100cbrt(x)']
 nus = np.array([
-	('0.01', 0.01), ('0.02', 0.02), ('0.05', 0.05), ('1/x', lambda x: 1.0/float(x)), ('1/10x', lambda x: 0.1/float(x)),
-	('1/100x', lambda x: 0.01/float(x)), ('1/sqrt(x)', lambda x: 1.0/pow(float(x),0.5)), ('1/10sqrt(x)', lambda x: 0.1/pow(float(x),0.5)),
-	('1/100sqrt(x)', lambda x: 0.01/pow(float(x),0.5)), ('1/cbrt(x)', lambda x: 1.0/pow(float(x),0.33)),
-	('1/10cbrt(x)', lambda x: 0.1/pow(float(x),0.33)), ('1/100cbrt(x)', lambda x: 0.01/pow(float(x),0.33))
+	(0, 0.01), (1, 0.02), (2, 0.05), (3, lambda x: 1.0/float(x)), (4, lambda x: 0.1/float(x)),
+	(5, lambda x: 0.01/float(x)), (6, lambda x: 1.0/pow(float(x),0.5)), (7, lambda x: 0.1/pow(float(x),0.5)),
+	(8, lambda x: 0.01/pow(float(x),0.5)), (9, lambda x: 1.0/pow(float(x),0.33)),
+	(10, lambda x: 0.1/pow(float(x),0.33)), (11, lambda x: 0.01/pow(float(x),0.33))
 ])
+# nus = np.array([
+# 	('0.01', 0.01), ('0.02', 0.02), ('0.05', 0.05), ('1/x', lambda x: 1.0/float(x)), ('1/10x', lambda x: 0.1/float(x)),
+# 	('1/100x', lambda x: 0.01/float(x)), ('1/sqrt(x)', lambda x: 1.0/pow(float(x),0.5)), ('1/10sqrt(x)', lambda x: 0.1/pow(float(x),0.5)),
+# 	('1/100sqrt(x)', lambda x: 0.01/pow(float(x),0.5)), ('1/cbrt(x)', lambda x: 1.0/pow(float(x),0.33)),
+# 	('1/10cbrt(x)', lambda x: 0.1/pow(float(x),0.33)), ('1/100cbrt(x)', lambda x: 0.01/pow(float(x),0.33))
+# ])
 mus = np.arange(0.05, 5*0.05, 0.05)
 counts = np.array([1, 2, 5, 10, 20, 50])
 gradient_model_params = [((nu_repr,nu),mu,count) for nu_repr,nu in nus for mu in mus for count in counts]
+
+def get_results(fname, n=1):
+	data = np.loadtxt(fname)
+	data = data[np.invert(np.isnan(data[:,-2])),:]
+	out = []
+	for i in range(n):
+		index = data[:,-2].argmin()
+		out.append(data[index,:])
+		data = np.delete(data, index, 0)
+	return np.array(out)
+
 
 def logistic_descent_model_selection():
 	seed = 123541
@@ -106,72 +129,115 @@ def logistic_descent():
 def mlp_binary_descent_model_selection():
 	seed = 2819732
 	print '-- Binary MLP Gradient Descent -------- :'
-	with open('results/mlp_binary_descent.txt', 'w') as csvfile:
-		writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		for (nu_repr,nu),mu,count in gradient_model_params:
-			print ' - Generating for params (nu,mu,count)  :', nu_repr, mu, count
-			classifier = mlp.MLP(10, 10, nu=nu, mu=mu, k=2)
-			training, validation = streams.validation_binary(count=100, seed=seed)
-			trained, chain, seconds = early_stopping.run(training, validation, classifier, count=count, max_time=30)
-			error, classerror = trained.normalized_error(validation)
-			print '   chain length                         :', len(chain)
-			print '   seconds                              :', seconds
-			print '   errors                               :', error
-			print '   classification errors                :', classerror
-			writer.writerow([nu_repr, mu, count, len(chain), seconds, error, classerror])
+	fname = 'results/mlp_binary_descent.txt'
+	try:
+		model_testing = np.loadtxt(fname)
+	except IOError:
+		model_testing = np.zeros(shape=(len(gradient_model_params), 7))
+	for i,((nu_repr,nu),mu,count) in enumerate(gradient_model_params):
+		if np.nanmax(model_testing[i,:]) > 0.0: continue
+		print ' - Generating for params (nu,mu,count)  :', nu_repr, mu, count
+		classifier = mlp.MLP(10, 10, nu=nu, mu=mu, k=2)
+		training, validation = streams.validation_binary(seed=seed)
+		trained, chain, seconds = early_stopping.run(training, validation, classifier, count=count)
+		error, classerror = trained.normalized_error(validation)
+		print '   chain length                         :', len(chain)
+		print '   seconds                              :', seconds
+		print '   errors                               :', error
+		print '   classification errors                :', classerror
+		model_testing[i] = [nu_repr, mu, count, len(chain), seconds, error, classerror]
+		np.savetxt(fname, model_testing)
+	nmin = 5
+	best = get_results(fname, nmin)
+	print "binary descent parameters:"
+	for i in range(nmin):
+		print "		error:", best[i,5]
+		print "		nu:", nus_repr[int(best[i,0])]
+		print "		mu:", best[i,1]
+		print "		count:", best[i,2]
 
 def mlp_5class_descent_model_selection():
 	seed = 12398123
 	print '-- 5Class MLP Gradient Descent -------- :'
-	with open('results/mlp_5class_descent.txt', 'w') as csvfile:
-		writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		for (nu_repr,nu),mu,count in gradient_model_params:
-			print ' - Generating for params (nu,mu,count)  :', nu_repr, mu, count
-			classifier = mlp.MLP(10, 10, nu=nu, mu=mu, k=5)
-			training, validation = streams.validation_5class(seed=seed)
-			trained, chain, seconds = early_stopping.run(training, validation, classifier, count=count)
-			error, classerror = trained.normalized_error(validation)
-			print '   chain length                         :', len(chain)
-			print '   seconds                              :', seconds
-			print '   errors                               :', error
-			print '   classification errors                :', classerror
-			writer.writerow([nu_repr, mu, count, len(chain), seconds, error, classerror])
+	fname = 'results/mlp_5class_descent.txt'
+	try:
+		model_testing = np.loadtxt(fname)
+	except IOError:
+		model_testing = np.zeros(shape=(len(gradient_model_params), 7))
+	for i,((nu_repr,nu),mu,count) in enumerate(gradient_model_params):
+		if np.nanmax(model_testing[i,:]) > 0.0: continue
+		print ' - Generating for params (nu,mu,count)  :', nu_repr, mu, count
+		classifier = mlp.MLP(10, 10, nu=nu, mu=mu, k=5)
+		training, validation = streams.validation_5class(seed=seed)
+		trained, chain, seconds = early_stopping.run(training, validation, classifier, count=count)
+		error, classerror = trained.normalized_error(validation)
+		print '   chain length                         :', len(chain)
+		print '   seconds                              :', seconds
+		print '   errors                               :', error
+		print '   classification errors                :', classerror
+		model_testing[i] = [nu_repr, mu, count, len(chain), seconds, error, classerror]
+		np.savetxt(fname, model_testing)
+	best = get_results(fname,5)
+	print "5class descent parameters:", best
 
 def mlp_binary_model_selection():
 	seed = 293482934
 	print '-- Binary MLP ------------------------- :'
 	H1s = H2s = np.arange(10,9*10,10)
-	model_params = cartesian([H1s, H2s])
-	model_testing = np.empty(shape=(model_params.size, 4))
-	for i,(H1,H2) in enumerate(model_params):
-		print ' - Generating for params (H1,H2)        :', H1, H2
-		classifier = mlp.MLP(H1, H2, k=2)
+	nus = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+	fname = 'results/mlp_binary.txt'
+	model_params = cartesian3(nus, H1s, H2s)
+	try:
+		model_testing = np.loadtxt(fname)
+	except IOError:
+		model_testing = np.zeros(shape=(len(model_params), 5))
+	for i,(nu,H1,H2) in enumerate(model_params):
+		if np.nanmax(model_testing[i,:]) > 0.0: continue
+		print ' - Generating for params (nu,H1,H2)        :', nu, H1, H2
+		classifier = mlp.MLP(H1, H2, k=2, nu=nu, mu=0.1)
 		training, validation = streams.validation_binary(seed=seed)
-		trained, _, _ = early_stopping.run(training, validation, classifier, count=10, max_time=100)
+		trained, _, _ = early_stopping.run(training, validation, classifier, count=20, max_time=100)
 		error, classerror = trained.normalized_error(validation)
 		print '   errors                               :', error
 		print '   classification errors                :', classerror
-		model_testing[i] = [H1, H2, error, classerror]
-	np.savetxt('results/mlp_binary.txt', model_testing)
+		model_testing[i] = [nu, H1, H2, error, classerror]
+		np.savetxt(fname, model_testing)
+	best = get_results(fname, 5)
+	print "binary parameters:", best
 
 def mlp_5class_model_selection():
 	seed = 23427310
 	print '-- 5Class MLP ------------------------- :'
-	H1s, H2s = np.arange(10,9*10,10)
-	model_params = cartesian(H1s, H2s)
-	model_testing = np.empty(shape=(model_params.size, 4))
-	for i,(H1,H2) in enumerate(model_params):
-		print ' - Generating for params (H1,H2)        :', H1, H2
-		classifier = mlp.MLP(H1, H2, k=5)
+	H1s = H2s = np.arange(10,9*10,10)
+	nus = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+	fname = 'results/mlp_5class.txt'
+	model_params = cartesian3(nus, H1s, H2s)
+	try:
+		model_testing = np.loadtxt(fname)
+	except IOError:
+		model_testing = np.zeros(shape=(len(model_params), 5))
+	for i,(nu,H1,H2) in enumerate(model_params):
+		if np.nanmax(model_testing[i,:]) > 0.0: continue
+		print ' - Generating for params (nu,H1,H2)        :', nu, H1, H2
+		classifier = mlp.MLP(H1, H2, k=5, nu=nu, mu=0.1)
 		training, validation = streams.validation_5class(seed=seed)
-		trained, _, _ = early_stopping.run(training, validation, classifier, count=10)
+		trained, _, _ = early_stopping.run(training, validation, classifier, count=5, max_time=100)
 		error, classerror = trained.normalized_error(validation)
 		print '   errors                               :', error
 		print '   classification errors                :', classerror
-		model_testing[i] = [H1, H2, error, classerror]
-	np.savetxt('result/mlp_5class.txt', model_testing)
+		model_testing[i] = [nu, H1, H2, error, classerror]
+		np.savetxt(fname, model_testing)
+	best = get_results(fname,5)
+	print "5class parameters:", best
 
+<<<<<<< HEAD
 logistic_descent()
 #lstsq_interval_selection()
 #logistic_descent_model_selection()
 #mlp_binary_descent_model_selection()
+=======
+# mlp_binary_descent_model_selection()
+# mlp_5class_descent_model_selection()
+# mlp_binary_model_selection()
+mlp_5class_model_selection()
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c

@@ -69,7 +69,7 @@ Project Report
 \end_layout
 
 \begin_layout Author
-Nicolas Voirol, Damien Firmenich
+Nicolas Voirol (186268), Damien Firmenich(178474)
 \begin_inset Newline newline
 \end_inset
 
@@ -80,7 +80,7 @@ EPFL, School of Computer and Communication Sciences
 Spring 2013
 \end_layout
 
-\begin_layout Section*
+\begin_layout Section
 Introduction
 \end_layout
 
@@ -113,17 +113,98 @@ The theory places gradient descent in batch mode above stochastic online
 \end_layout
 
 \begin_layout Subsection*
-Preprocessing
-\end_layout
-
-\begin_layout Subsection*
 Model and parameters
 \end_layout
 
-\begin_layout Paragraph*
-Binary MLP
+\begin_layout Subsection
+Binary MLP and multi-way MLP
 \end_layout
 
+\begin_layout Paragraph
+Backpropagation
+\end_layout
+
+\begin_layout Standard
+The vectorized backpropagation equations that we implemented for the binary
+ MLP are as follows:
+\end_layout
+
+\begin_layout Standard
+The residuals are computed using the derivative of the 
+\begin_inset Formula $tanh$
+\end_inset
+
+ tranfer function, and the derivative of the logistic loss function.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{r}^{\left(3\right)} & = & \sigma\left(\mathbf{a}^{\left(3\right)}\right)-\frac{1}{2}\left(\mathbf{t}+1\right)\\
+\mathbf{r}_{L}^{\left(2\right)} & = & \mathbf{a}_{LR}^{\left(2\right)}\sigma'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
+\mathbf{r}_{R}^{\left(2\right)} & = & \mathbf{a}_{LR}^{\left(2\right)}\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
+\mathbf{r}_{LR}^{\left(3\right)} & = & \sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
+\mathbf{r}_{L}^{\left(1\right)} & = & tanh'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[L]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right)\\
+\mathbf{r}_{R}^{\left(1\right)} & = & tanh'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[R]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\nabla_{w^{\left(3\right)}}E_{i} & = & r^{\left(3\right)}z^{\left(2\right)}\left(a^{\left(2\right)}\right)\\
+\nabla_{w_{L}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{L}^{\left(2\right)}\mathbf{z}_{L}^{\left(1\right)}\left(\mathbf{a}_{L}^{\left(1\right)}\right)\\
+\mathbf{\nabla}_{w_{R}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{R}^{\left(2\right)}\mathbf{z}_{R}^{\left(1\right)}\left(\mathbf{a}_{R}^{\left(1\right)}\right)\\
+\nabla_{w_{LR}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{LR}^{\left(2\right)}\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]\\
+\nabla_{w_{L}^{(1)}}E_{i} & = & \mathbf{r}_{L}^{\left(1\right)}\mathbf{x}_{L}\\
+\nabla_{w_{R}^{\left(1\right)}}E_{i} & = & \mathbf{r_{R}^{\left(1\right)}}\mathbf{x}_{R}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+And the gradients at each layer and for each stereo image (left, right)
+ are computed using the residuals.
+\end_layout
+
+\begin_layout Standard
+with 
+\begin_inset Formula $w_{LR[L]}^{\left(2\right)}$
+\end_inset
+
+ representing the portion of the weight matrix corresponding to the left
+ image, and analogously for 
+\begin_inset Formula $w_{LR[R]}^{\left(2\right)}$
+\end_inset
+
+.
+ The notation 
+\begin_inset Formula $\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]$
+\end_inset
+
+ means the concatenation of 
+\begin_inset Formula $\mathbf{z}_{L}^{\left(1\right)}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{z}_{R}^{\left(1\right)}$
+\end_inset
+
+.
+\end_layout
+
+<<<<<<< HEAD
 \begin_layout Paragraph*
 Logistic Regression
 \end_layout
@@ -195,22 +276,170 @@ The model selection process for the Least Squares Estimation technique was
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:lstsq_interval"
+=======
+\begin_layout Paragraph
+Multi-way classification
+\end_layout
+
+\begin_layout Standard
+Most of the MLP we implemented for binary classification could be reused
+ for multi-way classification.
+ Two changes had to be done, first the computation of the error on the top-layer
+, as we had to use the squared error, and the class selection.
+\end_layout
+
+\begin_layout Standard
+The squared error induces a change for the top-layer residual which becomes:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+r^{\left(3\right)}=a^{\left(3\right)}-t
+\]
 
 \end_inset
 
-).
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
+
+\end_layout
+
+\begin_layout Standard
+In multi-way classification we also have 5 outputs instead of a single one,
+ so the computation of the class associated with the input image is computed
+ is 
+\begin_inset Formula $\underset{i=1,...,5}{argmax}\left(a_{i}^{\left(3\right)}\right)$
+\end_inset
+
+ instead of 
+\begin_inset Formula $sgn\left(a^{\left(3\right)}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Model selection
+\end_layout
+
+\begin_layout Standard
+For each configuration of the MLP and gradient descent parameters, we estimated
+ the total error on the validation set (a third of the initial set, selected
+ randomly).
+ We tested performance for the learning rate 
+\begin_inset Formula $\eta$
+\end_inset
+
+, the momentum term 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and the size of the mini-batch.
+ Specifically for MLP, we tested the numbers of activation units for the
+ first and second layer (
+\begin_inset Formula $H_{1}$
+\end_inset
+
+, 
+\begin_inset Formula $H_{2})$
+\end_inset
+
+.
+ Its unintuitive how the value of one parameter may affect the performance
+ of the MLP, especially because they are not independent and so we need
+ to run the algorithm on all combinations of value to get a reasonable estimatio
+n.
+ For the learning 
+\begin_inset Formula $\eta$
+\end_inset
+
+ we choose constant functions (in the order of 
+\begin_inset Formula $1e^{-3}$
+\end_inset
+
+to 
+\begin_inset Formula $1e^{-5}$
+\end_inset
+
+) as well as variations of 
+\begin_inset Formula $\frac{1}{x}$
+\end_inset
+
+.
+ The momentum term varied from 
+\begin_inset Formula $0.05$
+\end_inset
+
+ to 
+\begin_inset Formula $0.25$
+\end_inset
+
+, and the mini-batch size ranged from 
+\begin_inset Formula $1$
+\end_inset
+
+ to 
+\begin_inset Formula $50$
+\end_inset
+
+.
+ As explained in the problem statement, we tested configuration of MLP with
+ 
+\begin_inset Formula $1$
+\end_inset
+
+ to 
+\begin_inset Formula $80$
+\end_inset
+
+ activation units in each hidden layers.
+\end_layout
+
+\begin_layout Standard
+The optimal parameters for the binary MLP are 
+\begin_inset Formula $\eta=1e^{-3}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu=1e^{-1}$
+\end_inset
+
+, mini-batch size of 
+\begin_inset Formula $20$
+\end_inset
+
+.
+ The numbers of units in the first layer is 
+\begin_inset Formula $20$
+\end_inset
+
+ and for the second layer is 
+\begin_inset Formula $50$
+\end_inset
+
+.
+ For the multi-way MLP, we found 
+\begin_inset Formula $\mu=1e^{-1}$
+\end_inset
+
+, mini-batch size of 
+\begin_inset Formula $5$
+\end_inset
+
+.
+ TODO: h1, h2, eta
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename lstsq_interval.pdf
+	filename ../plots/errors_mlp5_overfitting.pdf
 	width 80col%
 
 \end_inset
@@ -222,11 +451,85 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
+Example of overfitting for the multi-way MLP used for early-stopping
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example-of-overfitting"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Logistic regression
+\end_layout
+
+\begin_layout Subsection
+Linear regression
+\end_layout
+
+\begin_layout Section
+Results and Discussion
+\end_layout
+
+\begin_layout Subsection
+Binary MLP and multi-way MLP
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+<<<<<<< HEAD
+	filename lstsq_interval.pdf
+=======
+	filename ../plots/errors_mlp2.pdf
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+<<<<<<< HEAD
 Interval selection for Tikhonov regularization parameter computed by performing
  10-fold cross-validation.
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:lstsq_interval"
+=======
+Logistic error for binary classification using MLP for the training and
+ the validation set.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Logistic-error-for"
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 
 \end_inset
 
@@ -244,6 +547,7 @@ name "fig:lstsq_interval"
 \end_layout
 
 \begin_layout Standard
+<<<<<<< HEAD
 Once we had singled out a suitable interval, namely 
 \begin_inset Formula $\left[0;1.2\right]$
 \end_inset
@@ -262,18 +566,60 @@ reference "fig:lstsq_errors"
 
 ) and we can thus place the optimal regularizer at 
 \begin_inset ERT
+=======
+The graph in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Logistic-error-for"
+
+\end_inset
+
+ shows the logistic error computed with the optimal parameters for the binary
+ MLP.
+ Both the errors for the training and validation set are very close and
+ the MLP converges quickly to an optimal solution, as both the classification
+ error for the training and the validation set are null.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 status open
 
 \begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
 
-$v = 0.6$
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/errors_mlp5.pdf
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
 
-.
+
 \end_layout
 
+<<<<<<< HEAD
 \begin_layout Standard
 \begin_inset Float figure
 wide false
@@ -293,12 +639,15 @@ status open
 	filename lstsq_errors.pdf
 	width 80col%
 
+=======
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 \end_inset
 
 
 \end_layout
 
 \begin_layout Plain Layout
+<<<<<<< HEAD
 \begin_inset Caption
 
 \begin_layout Plain Layout
@@ -322,21 +671,32 @@ name "fig:tikhonov_a"
 \end_layout
 
 \begin_layout Plain Layout
+=======
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 \align center
 \begin_inset Float figure
 wide false
 sideways false
+<<<<<<< HEAD
 status open
+=======
+status collapsed
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
+<<<<<<< HEAD
 	filename lstsq_classerrors.pdf
+=======
+	filename ../plots/classerrors_mlp5.pdf
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 	width 80col%
 
 \end_inset
 
 
+<<<<<<< HEAD
 \end_layout
 
 \begin_layout Plain Layout
@@ -405,12 +765,27 @@ name "fig:lstsq_errors"
 \end_inset
 
 
+=======
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+<<<<<<< HEAD
 \begin_layout Section*
 Results and Discussion
 \end_layout
@@ -429,6 +804,61 @@ Least Squares Estimation
 
 \begin_layout Paragraph
 Mutli-way MLP
+=======
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Logistic error and classification error for multi-way classification using
+ MLP for the training and the validation set.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Logistic-error-for-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The graph in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Logistic-error-for-1"
+
+\end_inset
+
+ show the same metric for the multi-way MLP.
+ The system converges slower than before and there is a better separation
+ between the errors of the training and the validation set.
+ We also showed a graph representing the classification error for both set,
+ as they both converge to zero but not at the same speed.
+ It is interesting to notice that both the binary and multi-way MLP converge
+ to a classification error of zero after enough training.
+\end_layout
+
+\begin_layout Subsection
+Logistic regression
+\end_layout
+
+\begin_layout Subsection
+Linear regression
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c
 \end_layout
 
 \end_body

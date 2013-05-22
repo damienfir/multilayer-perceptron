@@ -1,10 +1,8 @@
 import csv
-import datetime
 import sys
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
 
 import stream_utils as streams
 import early_stopping
@@ -15,9 +13,7 @@ import logistic
 results = 'results/'
 plots = 'plots/'
 
-def plot_lstsq_errors():
-	print "-- Plotting Least Squares Errors -------------------- :"
-	data = np.loadtxt(results + 'lstsq_interval.txt')
+def plot_errors(data):
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
 	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
@@ -87,35 +83,89 @@ plot_lstsq_errors()
 def plot_errors(fname):
 	data = np.loadtxt(fname)
 	plt.figure()
-	plt.plot(data[0,:], label='training')
-	plt.plot(data[2,:], label='validation')
+	plt.plot(data[0,:], label='Training set')
+	plt.plot(data[2,:], label='Validation set')
 	# plt.savefig(plots+fname+'_errors.png')
+	plt.xlabel('Epoch number')
+	plt.ylabel('Logistic error')
 	plt.legend()
-	plt.show()
-	plt.figure()
-	plt.plot(data[1,:], label='training')
-	plt.plot(data[3,:], label='validation')
+	# plt.show()
+	# plt.figure()
+	# plt.plot(data[1,:], label='training')
+	# plt.plot(data[3,:], label='validation')
 	# plt.savefig(plots+fname+'_classerror.png')
+	# plt.legend()
+	# plt.show()
+
+def plot_comparative(data):
+	plt.figure()
+	plt.plot(data.T)
+	plt.xlabel('Epoch number')
+	plt.ylabel('Logistic error')
 	plt.legend()
 	plt.show()
 
 def plot_errors_lstsq():
 	pass
 
+def plot_errors_logistic():
+	pass
+
+def plot_errors_mlp2():
+	data = np.loadtxt('plots/errors_mlp2.txt')
+	plot_errors(data[:,:50])
+	plt.savefig('plots/errors_mlp2.pdf')
+
+def plot_errors_mlp5():
+	data = np.loadtxt('plots/errors_mlp5.txt')
+	plot_errors(data)
+	plt.savefig('plots/errors_mlp5.pdf')
+	plt.figure()
+	plt.plot(data[1,:]*100, label='Training set')
+	plt.plot(data[3,:]*100, label='Validation set')
+	plt.xlabel('Epoch number')
+	plt.ylabel('Classification error (%)')
+	plt.legend()
+	plt.savefig('plots/classerrors_mlp5.pdf')
+
+def plot_comparative_mlp2():
+	data = np.loadtxt('plots/errors_comparative_mlp2.txt')
+	plot_comparative(data)
+
+def plot_errors_mlp5_overfitting():
+	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
+	plot_errors(data[:,:400])
+	plt.savefig('plots/errors_mlp5_overfitting.pdf')
+
+def plot_confusion_matrix(labels,k):
+	mat = np.zeros((k,k))
+	for i in range(k):
+		for j in range(k):
+			mat[i,j] = np.sum((labels[0,:] == i+1) == (labels[1,:] == j+1))
+	plt.matshow(mat)
+
+def plot_confusion():
+	plot_confusion_matrix(labels,k)
+	plt.show()
+
+
 def plot_all():
 	#plot_errors('plots/errors_mlp2.txt')
 	plot_errors('plots/errors_mlp5.txt')
 	#plot_errors('plots/errors_logistic.txt')
+	# plot_errors_mlp2()
+	# plot_errors_mlp5()
+	# plot_errors_mlp5_overfitting()
+	# plot_comparative_mlp2()
+	plot_confusion()
 
-
-def generate_errors(classifier, streams):
-	max_time = 10
+def generate_errors(classifier, stream, max_time=300, count=10):
 	out = np.zeros((4,0))
 	start_time = datetime.datetime.now()
-	training, validation = streams
+	training, validation = stream
 	stop = False
 	while not stop:
-		x_left, x_right, t = training.next(20)
+		x_left, x_right, t = training.next(count)
 		classifier.train(x_left, x_right, t)
 		if training.looped:
 			training_error, training_classerror = classifier.normalized_error(training)
@@ -124,11 +174,22 @@ def generate_errors(classifier, streams):
 			d = np.transpose(np.array([[training_error, training_classerror, validation_error, validation_classerror]]))
 			out = np.hstack((out, d))
 			print d
-
+			
 			current_time = datetime.datetime.now()
 			if (current_time - start_time).seconds > max_time:
 				stop = True
 	return out
+
+def generate_comparative_mlp2():
+	t = 100
+	d1 = generate_errors(mlp.MLP(20,50, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(), t)
+	d2 = generate_errors(mlp.MLP(1,1, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(), t)
+	d3 = generate_errors(mlp.MLP(20,50, nu=1e-5, mu=1e-1, k=2), streams.validation_binary(), t)
+	d4 = generate_errors(mlp.MLP(20,50, nu=1e-3, mu=5e-1, k=2), streams.validation_binary(), t)
+	d5 = generate_errors(mlp.MLP(20,50, nu=1e-5, mu=1e-1, k=2), streams.validation_binary(), t, 1)
+	n = min(d1.shape[1],d2.shape[1],d3.shape[1],d4.shape[1],d5.shape[1])
+	d = np.vstack((d1[2,:n],d2[2,:n],d3[2,:n],d4[2,:n],d5[2,:n]))
+	np.savetxt('plots/errors_comparative_mlp2.txt', d)
 	
 def generate_errors_mlp2():
 	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(training_ratio=0.05, count=100))
@@ -136,7 +197,11 @@ def generate_errors_mlp2():
 
 def generate_errors_mlp5():
 	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=5), streams.validation_5class(training_ratio=0.5, count=100))
-	np.savetxt('plots/errors_mlp5.txt', d)
+	np.savetxt('plots/errors_mlp2.txt', d)
+
+def generate_errors_mlp5_overfitting():
+	d = generate_errors(mlp.MLP(100,100, nu=1e-3, mu=1e-1, k=5), streams.validation_5class(training_ratio=0.5, count=100))
+	np.savetxt('plots/errors_mlp5_overfitting.txt', d)
 
 def generate_errors_logistic():
 	d = generate_errors(logistic.LogisticLoss(nu=1e-3,mu=1e-1), streams.validation_5class())
@@ -155,11 +220,13 @@ def generate_errors_lstsq():
 	print avg_errors
 
 def generate_all():
-	#generate_errors_mlp2()
-	generate_errors_mlp5()
-	#generate_errors_logistic()
 	#generate_errors_lstsq()
-
+	# generate_errors_mlp2()
+	# generate_errors_mlp5()
+	# generate_errors_mlp5_overfitting()
+	generate_comparative_mlp2()
+	# generate_errors_logistic()
+	# generate_errors_lstsq()
 
 #generate_all()
 #plot_all()
