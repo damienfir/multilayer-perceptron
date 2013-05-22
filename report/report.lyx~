@@ -233,11 +233,19 @@ Mutli-way MLP
 \end_layout
 
 \begin_layout Paragraph*
+<<<<<<< HEAD
 Logistic Regression
 \end_layout
 
 \begin_layout Paragraph*
 Least Squares Estimation
+=======
+Logistic regression
+\end_layout
+
+\begin_layout Paragraph*
+Linear regression
+>>>>>>> fd3dc27e559a31deed7767a6d08f71a87c64a475
 \end_layout
 
 \end_body

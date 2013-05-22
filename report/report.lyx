@@ -124,10 +124,6 @@ Model and parameters
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
 Logistic Regression
 \end_layout
@@ -221,6 +217,10 @@ $v = 0.6$
 .
 \end_layout
 
+\begin_layout Paragraph
+Mutli-way MLP
+\end_layout
+
 \begin_layout Section*
 Results and Discussion
 \end_layout
@@ -229,16 +229,16 @@ Results and Discussion
 Binary MLP
 \end_layout
 
-\begin_layout Paragraph
-Mutli-way MLP
-\end_layout
-
 \begin_layout Paragraph*
 Logistic Regression
 \end_layout
 
 \begin_layout Paragraph*
 Least Squares Estimation
+\end_layout
+
+\begin_layout Paragraph
+Mutli-way MLP
 \end_layout
 
 \end_body

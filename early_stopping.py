@@ -1,14 +1,14 @@
 import datetime
 import numpy as np
 
-def run(training_stream, validation_stream, classifier, count=10, max_time=600):
+def run(training_stream, validation_stream, classifier, count=10, max_time=300):
 	stop = False
 	saved = None
 	all_errors = last_errors = []
 	start_time = datetime.datetime.now()
 	while not stop:
-		# x_left, x_right, t = training_stream.next(count)
-		x_left, x_right, t = training_stream.all()
+		x_left, x_right, t = training_stream.next(count)
+		# x_left, x_right, t = training_stream.all()
 		classifier.train(x_left, x_right, t)
 		if training_stream.looped:
 			error, _ = classifier.normalized_error(validation_stream)
@@ -33,7 +33,7 @@ def run(training_stream, validation_stream, classifier, count=10, max_time=600):
 			# if we have taken too long, stop training
 			current_time = datetime.datetime.now()
 			print "errors:", last_errors
-			# print "time:  ", (current_time - start_time).seconds
+			print "time:  ", (current_time - start_time).seconds
 			if (current_time - start_time).seconds > max_time:
 				stop = True
 
