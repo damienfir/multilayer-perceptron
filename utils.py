@@ -1,7 +1,7 @@
 import numpy as np
 
 def sigmoid(x):
-	return np.float(1.0) / (np.float(1.0) + np.exp(-x))
+	return 1.0 / (1.0 + np.exp(-x))
 
 def dxsigmoid(x):
 	s = sigmoid(x)
@@ -15,7 +15,10 @@ def dxtanh(x):
 	return np.float(1.0) - m(tmp, tmp)
 
 def lsexp(v, direction=0):
-	return np.log(np.sum(np.exp(v), direction))
+	extract = np.max(v, direction)
+	shape = (v.shape[0] / extract.shape[0], v.shape[1] / extract.shape[1])
+	substract = np.tile(extract, shape)
+	return extract + np.log(np.sum(np.exp(v - substract), direction))
 
 def m(*args):
 	args = list(args)

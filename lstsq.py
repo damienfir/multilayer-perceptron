@@ -14,7 +14,7 @@ class LeastSquares:
 
 	def train(self, x_lefts, x_rights, ts):
 		X = np.mat(np.vstack([x_lefts, x_rights, np.ones(x_lefts.shape[1])]), dtype=np.float).T
-		A = X.T * X + self.v * np.eye(X.shape[1])
+		A = X.T * X + self.v * np.eye(X.shape[1], dtype=np.float)
 		b = X.T * ts.T
 
 		# use numpy to solve the least squares normal equations problem
@@ -27,10 +27,13 @@ class LeastSquares:
 
 	def error(self, x_left, x_right, t):
 		X = np.mat(np.vstack([x_left, x_right, np.ones(x_left.shape[1])]), dtype=np.float)
-		result = (X.T * self.ws).T
-		x = result - t
-		error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
-		classerror = np.sum(np.argmax(result, 0) != np.argmax(t, 0), 1).flat[0]
+		y = self.ws.T * X
+		x = y - t
+		base_error = 0.5 * np.sum(m(x, x), 1)
+		regularizer_line = 0.1 * self.v * np.sum(m(self.ws, self.ws), 0).T
+		regularizer = np.tile(regularizer_line, (1, x_left.shape[1]))
+		error = np.sum(base_error + regularizer, 0).flat[0]
+		classerror = np.sum(np.argmax(y, 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror
 
 	def normalized_error(self, *args):

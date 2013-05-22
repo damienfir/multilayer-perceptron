@@ -10,8 +10,6 @@ import mlp
 import lstsq
 import logistic
 
-results = 'results/'
-plots = 'plots/'
 
 def plot_errors(fname):
 	data = np.loadtxt(fname)
@@ -28,13 +26,14 @@ def plot_errors(fname):
 	plt.legend()
 	plt.show()
 
+def plot_errors_lstsq():
+	pass
 
 def plot_all():
-	pass
+	# plot_errors('plots/errors_mlp2.txt')
+	plot_errors('plots/errors_mlp5.txt')
+	# plot_errors('plots/errors_logistic.txt')
 
-
-def generate_convergence():
-	pass
 
 def generate_errors(classifier):
 	max_time = 10
@@ -59,23 +58,35 @@ def generate_errors(classifier):
 	return out
 	
 def generate_errors_mlp2():
-	classifier = mlp.MLP(10,10, nu=1e-4, mu=1e-1)
-	d = generate_errors(classifier)
+	d = generate_errors(mlp.MLP(10,10, nu=1e-4, mu=1e-1))
 	np.savetxt('plots/errors_mlp2.txt', d)
 
+def generate_errors_mlp5():
+	d = generate_errors(mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5))
+	np.savetxt('plots/errors_mlp5.txt', d)
+
 def generate_errors_logistic():
-	classifier = logistic.LogisticLoss(nu=1e-3,mu=1e-1)
-	d = generate_errors(classifier)
+	d = generate_errors(logistic.LogisticLoss(nu=1e-3,mu=1e-1))
 	np.savetxt('plots/errors_logistic.txt', d)
 
+def generate_errors_lstsq():
+	avg_errors = np.zeros([1])
+	for v in np.arange(1e-2,9*1e-2,1e-2):
+		classifier = lstsq.LeastSquares(v)
+		stream = test.stream_5class()
+		x_left, x_right, t = stream.all()
+		classifier.train(x_left, x_right, t)
+		avg_error = test.classify_5class(classifier)
+		avg_errors = np.append(avg_errors,avg_error)
+		print avg_error
+	print avg_errors
+
 def generate_all():
-	pass
+	# generate_errors_mlp2()
+	generate_errors_mlp5()
+	# generate_errors_logistic()
+	# generate_errors_lstsq()
 
 
-
-
-# generate_errors_mlp2()
-# generate_errors_logistic()
-
-plot_errors('plots/errors_mlp2.txt')
-plot_errors('plots/errors_logistic.txt')
+# generate_all()
+plot_all()

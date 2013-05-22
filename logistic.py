@@ -9,7 +9,7 @@ class LogisticLoss:
 		self.k = 5
 		self.dimension = dimension
 		random = np.random.RandomState(seed)
-		self.ws = np.mat(random.randn(k, 2 * dimension + 1), dtype=np.float)
+		self.ws = np.mat(random.randn(2 * dimension + 1, k), dtype=np.float)
 
 	def clone(self):
 		classifier = LogisticLoss(self.gradient.nu, self.gradient.mu,
@@ -20,7 +20,10 @@ class LogisticLoss:
 	def gradients(self, x_left, x_right, t):
 		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
 		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
-		grads = (sigmoid(self.ws * X) - t) * X.T
+		y = self.ws.T * X
+		sigma_k = np.exp(y - lsexp(y))
+		grad_Ei = sigma_k - t
+		grads = (grad_Ei * X.T).T
 		return grads
 
 	def train(self, x_left, x_right, t):
@@ -36,9 +39,9 @@ class LogisticLoss:
 	def error(self, x_left, x_right, t):
 		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
 		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
-		result = self.ws * X
-		error = np.sum(lsexp(result, 0) - np.sum(m(t, result), 0), 1).flat[0]
-		classerror = np.sum(np.argmax(result, 0) != np.argmax(t, 0), 1).flat[0]
+		y = self.ws.T * X
+		error = np.sum(lsexp(y, 0) - np.sum(m(t, y), 0), 1).flat[0]
+		classerror = np.sum(np.argmax(y, 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror
 
 	def normalized_error(self, *args):

@@ -41,9 +41,9 @@ class DirectionalGradientGenerator:
 
 def verify(stream, classifier, count=100, inputs=100, h=1e-7):
 	print " - Testing for (count, inputs, h)   :", count, inputs, h
-	errors, skiped = [], 0
+	errors, skipped = [], 0
 	for _ in xrange(0, inputs):
-		x_left, x_right, t = stream.next(count=10)
+		x_left, x_right, t = stream.next(count=1)
 		grads = classifier.gradients(x_left, x_right, t)
 		directionals = DirectionalGradientGenerator(classifier, x_left, x_right, t)
 		for _ in xrange(0, count):
@@ -52,18 +52,19 @@ def verify(stream, classifier, count=100, inputs=100, h=1e-7):
 				classifier_result = grads[idx][x,y]
 			else:
 				classifier_result = grads[x,y]
+			#print classifier_result, directional_result
 			if abs(classifier_result) > 0.01:
 				ratio = abs(classifier_result - directional_result) / abs(classifier_result)
 				if ratio > h:
 					errors.append((classifier_result, directional_result))
 			else:
-				skiped = skiped + 1
-	
+				skipped = skipped + 1
+
 	error_count = len(errors)
-	considered_count = (count * inputs) - skiped
+	considered_count = (count * inputs) - skipped
 	error_rate = 100.0 * float(error_count) / float(considered_count)
 	summary = "%0.2f%% (%d / %d)" % (error_rate, error_count, considered_count)
-	print "   result                           :", summary
+	print "   error rate                       :", summary
 	if errors:
 		max_diff = max(map(lambda x: abs(x[0] - x[1]), errors))
 		max_grad = max(map(lambda x: max(x[0], x[1]), errors))
@@ -73,7 +74,7 @@ def verify(stream, classifier, count=100, inputs=100, h=1e-7):
 		#	print "ws[" + str(idx) + "][" + str(x) + "," + str(y) + "] ->",
 		#	print "classifier gradient of", c_result, "vs directional of", d_result,
 		#	print "diff =", abs(c_result - d_result)
-	
+
 def verify_binary_mlp():
 	print "-- Binary MLP --------------------- :"
 	stream = streams.training_binary()
