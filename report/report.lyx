@@ -135,43 +135,24 @@ The residuals are computed using the derivative of the
 \end_inset
 
  tranfer function, and the derivative of the logistic loss function.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\mathbf{r}^{\left(3\right)} & = & \sigma\left(\mathbf{a}^{\left(3\right)}\right)-\frac{1}{2}\left(\mathbf{t}+1\right)\\
-\mathbf{r}_{L}^{\left(2\right)} & = & \mathbf{a}_{LR}^{\left(2\right)}\sigma'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
-\mathbf{r}_{R}^{\left(2\right)} & = & \mathbf{a}_{LR}^{\left(2\right)}\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
-\mathbf{r}_{LR}^{\left(3\right)} & = & \sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)}\\
-\mathbf{r}_{L}^{\left(1\right)} & = & tanh'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[L]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right)\\
-\mathbf{r}_{R}^{\left(1\right)} & = & tanh'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[R]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right)
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\nabla_{w^{\left(3\right)}}E_{i} & = & r^{\left(3\right)}z^{\left(2\right)}\left(a^{\left(2\right)}\right)\\
-\nabla_{w_{L}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{L}^{\left(2\right)}\mathbf{z}_{L}^{\left(1\right)}\left(\mathbf{a}_{L}^{\left(1\right)}\right)\\
-\mathbf{\nabla}_{w_{R}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{R}^{\left(2\right)}\mathbf{z}_{R}^{\left(1\right)}\left(\mathbf{a}_{R}^{\left(1\right)}\right)\\
-\nabla_{w_{LR}^{\left(2\right)}}E_{i} & = & \mathbf{r}_{LR}^{\left(2\right)}\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]\\
-\nabla_{w_{L}^{(1)}}E_{i} & = & \mathbf{r}_{L}^{\left(1\right)}\mathbf{x}_{L}\\
-\nabla_{w_{R}^{\left(1\right)}}E_{i} & = & \mathbf{r_{R}^{\left(1\right)}}\mathbf{x}_{R}
-\end{eqnarray*}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-And the gradients at each layer and for each stereo image (left, right)
+ Then the gradients at each layer and for each stereo image (left, right)
  are computed using the residuals.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\mathbf{r}^{\left(3\right)}=\sigma\left(\mathbf{a}^{\left(3\right)}\right)-\frac{1}{2}\left(\mathbf{t}+1\right) & \Rightarrow & \nabla_{w^{\left(3\right)}}E_{i}=r^{\left(3\right)}\left(z^{\left(2\right)}\right)^{T}\\
+\mathbf{r}_{L}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \nabla_{w_{L}^{\left(2\right)}}E_{i}=\mathbf{r}_{L}^{\left(2\right)}\left(\mathbf{z}_{L}^{\left(1\right)}\right)^{T}\\
+\mathbf{r}_{R}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{\nabla}_{w_{R}^{\left(2\right)}}E_{i}=\mathbf{r}_{R}^{\left(2\right)}\left(\mathbf{z}_{R}^{\left(1\right)}\right)^{T}\\
+\mathbf{r}_{LR}^{\left(3\right)}=\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{r}_{LR}^{\left(2\right)}\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]^{T}\\
+\mathbf{r}_{L}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[L]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{r}_{L}^{\left(1\right)}\left(\mathbf{x}_{L}\right)^{T}\\
+\mathbf{r}_{R}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[R]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{r_{R}^{\left(1\right)}}\left(\mathbf{x}_{R}\right)^{T}
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -184,7 +165,14 @@ with
 \begin_inset Formula $w_{LR[R]}^{\left(2\right)}$
 \end_inset
 
-.
+, 
+\begin_inset Formula $g\left(\cdot\right)$
+\end_inset
+
+ is the transfer function 
+\begin_inset Formula $tanh\left(\cdot\right)$
+\end_inset
+
  The notation 
 \begin_inset Formula $\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]$
 \end_inset
@@ -227,6 +215,16 @@ r^{\left(3\right)}=a^{\left(3\right)}-t
 \end_layout
 
 \begin_layout Standard
+and the equations of backpropagation for the top layer don't need to be
+ changed as they are vectorized and automatically take into account the
+ multi-dimensionality of the labels 
+\begin_inset Formula $\mathbf{t}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 In multi-way classification we also have 5 outputs instead of a single one,
  so the computation of the class associated with the input image is computed
  is 
@@ -242,6 +240,117 @@ In multi-way classification we also have 5 outputs instead of a single one,
 
 \begin_layout Paragraph
 Model selection
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/comparative_mlp2.pdf
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Comparative plot showing the effect of the MLP and gradient descent parameters
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Comparative-plot-showing"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/errors_mlp5_overfitting.pdf
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Example of overfitting for the 
+\series bold
+multi-way MLP
+\series default
+ used for early-stopping
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example-of-overfitting"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -341,6 +450,10 @@ The optimal parameters for the binary MLP are
 
 .
  For the multi-way MLP, we found 
+\begin_inset Formula $\eta=1e^{-3}$
+\end_inset
+
+, 
 \begin_inset Formula $\mu=1e^{-1}$
 \end_inset
 
@@ -348,53 +461,30 @@ The optimal parameters for the binary MLP are
 \begin_inset Formula $5$
 \end_inset
 
-.
- TODO: h1, h2, eta
+, and number of units in the first and second layer of 
+\begin_inset Formula $60$
+\end_inset
+
+ and 
+\begin_inset Formula $10$
+\end_inset
+
+ respectively.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename ../plots/errors_mlp5_overfitting.pdf
-	width 80col%
+In Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example-of-overfitting"
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Example of overfitting for the multi-way MLP used for early-stopping
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Example-of-overfitting"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
+ is an example of overfitting where the error on the validation set initially
+ decreases but starts to increase as soon as the MLP is overfitting the
+ training data.
+ For all gradient-descent based algorithm, we used early stopping on this
+ graph to avoid overfitting.
 \end_layout
 
 \begin_layout Subsection
@@ -518,7 +608,7 @@ reference "fig:Error-function-value"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -560,7 +650,7 @@ name "fig:Interval-selection-lstsq"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -683,20 +773,20 @@ reference "fig:Logistic-error-for"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename ../plots/errors_mlp5.pdf
-	width 80col%
+	width 50col%
 
 \end_inset
 
@@ -718,20 +808,16 @@ status collapsed
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
-\align center
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename ../plots/classerrors_mlp5.pdf
-	width 80col%
+	width 50col%
 
 \end_inset
 
@@ -818,6 +904,44 @@ Classification results
 wide false
 sideways false
 status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/testing_boxplot.pdf
+	width 80col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Comparative boxplot for each classifier
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure

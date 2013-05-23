@@ -230,14 +230,7 @@ def mlp_5class_model_selection():
 	best = get_results(fname,5)
 	print "5class parameters:", best
 
-<<<<<<< HEAD
-logistic_descent()
-#lstsq_interval_selection()
-#logistic_descent_model_selection()
-#mlp_binary_descent_model_selection()
-=======
 # mlp_binary_descent_model_selection()
 # mlp_5class_descent_model_selection()
 # mlp_binary_model_selection()
 mlp_5class_model_selection()
->>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c

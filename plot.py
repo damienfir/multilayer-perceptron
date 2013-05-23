@@ -13,11 +13,11 @@ import logistic
 results = 'results/'
 plots = 'plots/'
 
-def plot_errors(data):
+def plot_errors_lstsq(data):
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
 	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
-	plt.ylabel('squared error')
+	plt.ylabel('Squared error')
 	plt.xlabel('Tikhonov regularizer')
 	plt.gcf().subplots_adjust(bottom=0.15)
 	plt.savefig(plots + 'lstsq_interval.pdf')
@@ -25,7 +25,7 @@ def plot_errors(data):
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
 	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
-	plt.ylabel('squared error')
+	plt.ylabel('Squared error')
 	plt.xlabel('Tikhonov regularizer')
 	plt.gcf().subplots_adjust(bottom=0.15)
 	plt.savefig(plots + 'lstsq_errors.pdf')
@@ -33,7 +33,7 @@ def plot_errors(data):
 	plt.figure()
 	plt.boxplot(data[:,1:].T)
 	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
-	plt.ylabel('classification error rate')
+	plt.ylabel('Classification error rate')
 	plt.xlabel('Tikhonov regularizer')
 	plt.gcf().subplots_adjust(bottom=0.15)
 	plt.savefig(plots + 'lstsq_classerrors.pdf')
@@ -65,21 +65,9 @@ def plot_logistic_errors():
 		plot_for_count('50')
 	print " +---> DONE"
 
-plot_lstsq_errors()
+# plot_lstsq_errors()
 #plot_logistic_errors()
 
-#def plot_mlp_errors(fname):
-#	data = np.loadtxt(results + fname+'.txt')
-#	plt.figure()
-#	plt.plot(data[0],data[1].T)
-#	plt.plot(data[0],data[2].T)
-#	plt.savefig(plots+fname+'_errors.png')
-#	plt.figure()
-#	plt.plot(data[0],data[3].T)
-#	plt.savefig(plots+fname+'_classerror.png')
-
-#plot_mlp_errors('mlp_binary')
-#plot_mlp_errors('mlp_5class')
 def plot_errors(fname):
 	data = np.loadtxt(fname)
 	plt.figure()
@@ -89,27 +77,6 @@ def plot_errors(fname):
 	plt.xlabel('Epoch number')
 	plt.ylabel('Logistic error')
 	plt.legend()
-	# plt.show()
-	# plt.figure()
-	# plt.plot(data[1,:], label='training')
-	# plt.plot(data[3,:], label='validation')
-	# plt.savefig(plots+fname+'_classerror.png')
-	# plt.legend()
-	# plt.show()
-
-def plot_comparative(data):
-	plt.figure()
-	plt.plot(data.T)
-	plt.xlabel('Epoch number')
-	plt.ylabel('Logistic error')
-	plt.legend()
-	plt.show()
-
-def plot_errors_lstsq():
-	pass
-
-def plot_errors_logistic():
-	pass
 
 def plot_errors_mlp2():
 	data = np.loadtxt('plots/errors_mlp2.txt')
@@ -130,7 +97,25 @@ def plot_errors_mlp5():
 
 def plot_comparative_mlp2():
 	data = np.loadtxt('plots/errors_comparative_mlp2.txt')
-	plot_comparative(data)
+	plt.figure()
+	plt.plot(data[0,:], label='nu=1e-3 mu=1e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[1,:], label='nu=1e-3 mu=1e-1 H1=1  H2=1  bs=10')
+	plt.plot(data[2,:], label='nu=1e-5 mu=1e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[3,:], label='nu=1e-3 mu=5e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[4,:], label='nu=1e-3 mu=1e-1 H1=20 H2=50 bs=1')
+	plt.xlabel('Epoch number')
+	plt.ylabel('Logistic error')
+	plt.legend(fontsize=14)
+	plt.savefig('plots/comparative_mlp2.pdf')
+
+def plot_testing_errors():
+	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,0]
+	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,0]
+	plt.boxplot([mlp2,mlp5])
+	# plt.show()
+	plt.ylabel('Misclassification percentage')
+	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Linear',''))
+	plt.savefig('plots/testing_boxplot.pdf')
 
 def plot_errors_mlp5_overfitting():
 	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
@@ -162,13 +147,22 @@ def plot_confusion_matrices():
 
 def plot_all():
 	#plot_errors('plots/errors_mlp2.txt')
-	plot_errors('plots/errors_mlp5.txt')
+	# plot_errors('plots/errors_mlp5.txt')
 	#plot_errors('plots/errors_logistic.txt')
 	# plot_errors_mlp2()
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
-	plot_confusion_matrices()
+	plot_testing_errors()
+	# plot_errors_lstsq()
+	# plot_logistic_errors()
+	# plot_confusion_matrices()
+
+
+
+
+
+
 
 def generate_errors(classifier, stream, max_time=300, count=10):
 	out = np.zeros((4,0))
@@ -197,7 +191,7 @@ def generate_confusion_matrix(classifier,streams,testing):
 	x_left,x_right,t = testing.all()
 	if t.shape[0] > 1:
 		t = np.argmax(t,0)
-	saved,errors,seconds = early_stopping.run(training,validation,classifier,max_time=2)
+	saved,errors,seconds = early_stopping.run(training,validation,classifier,max_time=100)
 	t_ = saved.classify(x_left,x_right)
 	return np.vstack((t,t_))
 
@@ -211,6 +205,16 @@ def generate_confusion_mlp5():
 	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
 	np.savetxt('plots/confusion_mlp5.txt', confusion)
 
+def generate_confusion_logistic():
+	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
+	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
+	np.savetxt('plots/confusion_logistic.txt', confusion)
+
+def generate_confusion_lstsq():
+	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
+	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
+	np.savetxt('plots/confusion_lstsq.txt', confusion)
+	
 def generate_comparative_mlp2():
 	t = 100
 	d1 = generate_errors(mlp.MLP(20,50, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(), t)
@@ -262,4 +266,4 @@ def generate_all():
 	# generate_errors_lstsq()
 
 #generate_all()
-#plot_all()
+plot_all()
