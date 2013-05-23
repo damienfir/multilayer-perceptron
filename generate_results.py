@@ -101,6 +101,31 @@ def logistic_descent_model_selection():
 			print '   classification errors                :', classerror
 			writer.writerow([nu_repr, mu, count, len(chain), seconds, error, classerror])
 
+def logistic_descent():
+	print '-- Logistic Regression ---------------- :'
+	params = [
+		[0.02, 0.05, 5],  # results/logistic_1.txt
+		[0.02, 0.05, 10], # results/logistic_2.txt
+		[0.02, 0.05, 20], # results/logistic_3.txt
+		[0.02, 0.15, 2],  # results/logistic_4.txt
+		[0.02, 0.2, 20]   # results/logistic_5.txt
+	]
+	for i,(nu,mu,count) in enumerate(params):
+		with open('results/logistic_' + str(i + 1) + '.txt', 'w') as csvfile:
+			writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			print ' - Generating for params (nu,mu,count)  :', nu, mu, count
+			for _ in range(0, 10):
+				classifier = logistic.LogisticLoss(nu,mu)
+				training, validation = streams.validation_5class()
+				trained, chain, seconds = early_stopping.run(training, validation, classifier, count=count, max_time=300)
+				error, classerror = trained.normalized_error(validation)
+				print '   chain length                         :', len(chain)
+				print '   seconds                              :', seconds
+				print '   errors                               :', error
+				print '   classification errors                :', classerror
+				row = [nu, mu, count, seconds, error, classerror] + chain
+				writer.writerow(row)
+
 def mlp_binary_descent_model_selection():
 	seed = 2819732
 	print '-- Binary MLP Gradient Descent -------- :'
@@ -205,7 +230,14 @@ def mlp_5class_model_selection():
 	best = get_results(fname,5)
 	print "5class parameters:", best
 
+<<<<<<< HEAD
+logistic_descent()
+#lstsq_interval_selection()
+#logistic_descent_model_selection()
+#mlp_binary_descent_model_selection()
+=======
 # mlp_binary_descent_model_selection()
 # mlp_5class_descent_model_selection()
 # mlp_binary_model_selection()
 mlp_5class_model_selection()
+>>>>>>> 68fb1e32ee513100e722541ec507a737cce2323c

@@ -1,6 +1,6 @@
-import datetime
+import csv
 import sys
-
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -10,8 +10,78 @@ import mlp
 import lstsq
 import logistic
 
+results = 'results/'
+plots = 'plots/'
 
 def plot_errors(data):
+	plt.figure()
+	plt.boxplot(data[:,1:].T, whis=2.0)
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('squared error')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_interval.pdf')
+	data = np.loadtxt(results + 'lstsq_errors.txt')
+	plt.figure()
+	plt.boxplot(data[:,1:].T, whis=2.0)
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('squared error')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_errors.pdf')
+	data = np.loadtxt(results + 'lstsq_classerrors.txt')
+	plt.figure()
+	plt.boxplot(data[:,1:].T)
+	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
+	plt.ylabel('classification error rate')
+	plt.xlabel('Tikhonov regularizer')
+	plt.gcf().subplots_adjust(bottom=0.15)
+	plt.savefig(plots + 'lstsq_classerrors.pdf')
+	print " +---> DONE"
+
+def plot_logistic_errors():
+	print "-- Plotting Logistic Regression Errors -------------- :"
+	with open(results + 'logistic_descent.txt', 'r') as csvfile:
+		reader = csv.reader(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		data = [(nu_repr, mu, count, error, classerror) for nu_repr, mu, count, l, s, error, classerror in reader]
+		def plot_for_count(cnt):
+			counts = [(nu_repr, mu, error, classerror) for nu_repr, mu, count, error, classerror in data if count == cnt]
+			nus = list(np.reshape(np.array(map(lambda x: x[0], counts)), (12, 4))[:,0])
+			nu_map = dict(zip(nus, range(len(nus))))
+			X = np.reshape(np.array(map(lambda x: nu_map[x[0]], counts)), (12, 4))
+			Y = np.reshape(np.array(map(lambda x: float(x[1]), counts)), (12, 4))
+			Z = np.reshape(np.array(map(lambda x: float(x[2]), counts)), (12, 4))
+			fig = plt.figure()
+			ax = fig.gca(projection='3d')
+			ax.set_xticks(range(len(nus)))
+			ax.set_xticklabels(nus)
+			ax.plot_wireframe(X, Y, Z, rstride=1, cstride=1)
+			plt.savefig(plots + 'logistic_descent_' + str(cnt) + '.pdf')
+		plot_for_count('1')
+		plot_for_count('2')
+		plot_for_count('5')
+		plot_for_count('10')
+		plot_for_count('20')
+		plot_for_count('50')
+	print " +---> DONE"
+
+plot_lstsq_errors()
+#plot_logistic_errors()
+
+#def plot_mlp_errors(fname):
+#	data = np.loadtxt(results + fname+'.txt')
+#	plt.figure()
+#	plt.plot(data[0],data[1].T)
+#	plt.plot(data[0],data[2].T)
+#	plt.savefig(plots+fname+'_errors.png')
+#	plt.figure()
+#	plt.plot(data[0],data[3].T)
+#	plt.savefig(plots+fname+'_classerror.png')
+
+#plot_mlp_errors('mlp_binary')
+#plot_mlp_errors('mlp_5class')
+def plot_errors(fname):
+	data = np.loadtxt(fname)
 	plt.figure()
 	plt.plot(data[0,:], label='Training set')
 	plt.plot(data[2,:], label='Validation set')
@@ -91,12 +161,14 @@ def plot_confusion_matrices():
 
 
 def plot_all():
+	#plot_errors('plots/errors_mlp2.txt')
+	plot_errors('plots/errors_mlp5.txt')
+	#plot_errors('plots/errors_logistic.txt')
 	# plot_errors_mlp2()
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
 	plot_confusion_matrices()
-
 
 def generate_errors(classifier, stream, max_time=300, count=10):
 	out = np.zeros((4,0))
@@ -151,12 +223,12 @@ def generate_comparative_mlp2():
 	np.savetxt('plots/errors_comparative_mlp2.txt', d)
 	
 def generate_errors_mlp2():
-	d = generate_errors(mlp.MLP(20,50, nu=1e-3, mu=1e-1, k=2), streams.validation_binary())
+	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=2), streams.validation_binary(training_ratio=0.05, count=100))
 	np.savetxt('plots/errors_mlp2.txt', d)
 
 def generate_errors_mlp5():
-	d = generate_errors(mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5), streams.validation_5class())
-	np.savetxt('plots/errors_mlp5.txt', d)
+	d = generate_errors(mlp.MLP(100, 100, nu=1e-3, mu=1e-1, k=5), streams.validation_5class(training_ratio=0.5, count=100))
+	np.savetxt('plots/errors_mlp2.txt', d)
 
 def generate_errors_mlp5_overfitting():
 	d = generate_errors(mlp.MLP(100,100, nu=1e-3, mu=1e-1, k=5), streams.validation_5class(training_ratio=0.5, count=100))
@@ -179,6 +251,7 @@ def generate_errors_lstsq():
 	print avg_errors
 
 def generate_all():
+	#generate_errors_lstsq()
 	# generate_errors_mlp2()
 	# generate_errors_mlp5()
 	# generate_errors_mlp5_overfitting()
@@ -188,6 +261,5 @@ def generate_all():
 	# generate_errors_logistic()
 	# generate_errors_lstsq()
 
-
-# generate_all()
-plot_all()
+#generate_all()
+#plot_all()

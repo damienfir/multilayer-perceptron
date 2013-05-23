@@ -3,14 +3,20 @@ import stream_utils as streams
 import numpy as np
 import mlp
 
+binary = True
+
 while True:
 	stop = False
 	saved = None
 	seed = 293482934
 	all_errors = last_errors = []
 	start_time = datetime.datetime.now()
-	training_stream, validation_stream = streams.validation_binary(seed=seed)
-	classifier = mlp.MLP(50, 50, k=2, nu=3e-4, mu=1e-1)
+	if binary:
+		training_stream, validation_stream = streams.validation_binary(seed=seed)
+		classifier = mlp.MLP(50, 50, k=2, nu=3e-4, mu=1e-1)
+	else:
+		training_stream, validation_stream = streams.validation_5class(seed=seed)
+		classifier = mlp.MLP(50, 50, k=5, nu=3e-4, mu=1e-1)
 	count = 10
 	max_time = 100
 	while not stop:
@@ -21,7 +27,9 @@ while True:
 			all_errors = all_errors + [error]
 
 			grad = classifier.gradients(x_left, x_right, t)
-			print "gradients: ", np.sqrt(sum(map(lambda x: np.sum(np.array(x)**2), grad)))
+			print "gradients:", np.sqrt(sum(map(lambda x: np.sum(np.array(x)**2), grad)))
+			print "error function:", error
+			print "classification error rate:", classerror
 
 			# save errors to check for function climbing
 			if not last_errors or error < min(last_errors):
