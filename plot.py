@@ -67,16 +67,27 @@ def plot_errors_mlp5_overfitting():
 	plot_errors(data[:,:400])
 	plt.savefig('plots/errors_mlp5_overfitting.pdf')
 
+
 def plot_confusion_matrix(labels,k):
+	print labels
 	mat = np.zeros((k,k))
 	for i in range(k):
 		for j in range(k):
 			mat[i,j] = np.sum((labels[0,:] == i+1) == (labels[1,:] == j+1))
 	plt.matshow(mat)
+	plt.xlabel('Estimated')
+	plt.ylabel('Class')
 
-def plot_confusion():
-	plot_confusion_matrix(labels,k)
-	plt.show()
+def plot_confusion_matrices():
+	plot_confusion_matrix(0.5 * (np.loadtxt('plots/confusion_mlp2.txt') + 1) + 1,2)
+	plt.savefig('plots/confusion_mlp2.pdf')
+	plot_confusion_matrix(np.loadtxt('plots/confusion_mlp5.txt'),5)
+	plt.savefig('plots/confusion_mlp5.pdf')
+	# plot_confusion_matrix(np.loadtxt('plots/confusion_logistic.txt'),5)
+	# plt.savefig('plots/confusion_logistic.pdf')
+	# plot_confusion_matrix(np.loadtxt('plots/confusion_lstsq.txt'),5)
+	# plt.savefig('plots/confusion_lstsq.pdf')
+
 
 
 def plot_all():
@@ -84,7 +95,7 @@ def plot_all():
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
-	plot_confusion()
+	plot_confusion_matrices()
 
 
 def generate_errors(classifier, stream, max_time=300, count=10):
@@ -107,6 +118,26 @@ def generate_errors(classifier, stream, max_time=300, count=10):
 			if (current_time - start_time).seconds > max_time:
 				stop = True
 	return out
+
+
+def generate_confusion_matrix(classifier,streams,testing):
+	training,validation = streams
+	x_left,x_right,t = testing.all()
+	if t.shape[0] > 1:
+		t = np.argmax(t,0)
+	saved,errors,seconds = early_stopping.run(training,validation,classifier,max_time=2)
+	t_ = saved.classify(x_left,x_right)
+	return np.vstack((t,t_))
+
+def generate_confusion_mlp2():
+	classifier = mlp.MLP(20,50, nu=1e-3, mu=1e-1, k=2)
+	confusion = generate_confusion_matrix(classifier,streams.validation_binary(),streams.testing_binary())
+	np.savetxt('plots/confusion_mlp2.txt', confusion)
+
+def generate_confusion_mlp5():
+	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
+	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
+	np.savetxt('plots/confusion_mlp5.txt', confusion)
 
 def generate_comparative_mlp2():
 	t = 100
@@ -151,7 +182,9 @@ def generate_all():
 	# generate_errors_mlp2()
 	# generate_errors_mlp5()
 	# generate_errors_mlp5_overfitting()
-	generate_comparative_mlp2()
+	# generate_comparative_mlp2()
+	generate_confusion_mlp2()
+	generate_confusion_mlp5()
 	# generate_errors_logistic()
 	# generate_errors_lstsq()
 
