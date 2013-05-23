@@ -491,6 +491,27 @@ reference "fig:Interval-selection-lstsq"
 \end_inset
 
 ).
+ Once we had singled out a suitable interval, namely 
+\begin_inset Formula $\left[0;1.2\right]$
+\end_inset
+
+, we performed a more precise search by resorting to a linear parameter
+ space of 
+\begin_inset Formula $\left\{ 5e^{-2}*k\mid0\leq k<25\right\} $
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Error-function-value"
+
+\end_inset
+
+) and we can thus place the optimal regularizer at 
+\begin_inset Formula $0.6$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -533,30 +554,6 @@ name "fig:Interval-selection-lstsq"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-Once we had singled out a suitable interval, namely 
-\begin_inset Formula $\left[0;1.2\right]$
-\end_inset
-
-, we performed a more precise search by resorting to a linear parameter
- space of 
-\begin_inset Formula $\left\{ 5e^{-2}*k\mid0\leq k<25\right\} $
-\end_inset
-
- (see Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Error-function-value"
-
-\end_inset
-
-) and we can thus place the optimal regularizer at 
-\begin_inset Formula $0.6$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
