@@ -1071,7 +1071,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1105,7 +1105,7 @@ Binary MLP
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1139,7 +1139,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename /home/pocus/epfl/pcml/project/pcml/plots/confusion_logistic.pdf
+	filename ../plots/confusion_logistic.pdf
 	width 25col%
 
 \end_inset
@@ -1165,7 +1165,7 @@ Logistic eror regression
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics

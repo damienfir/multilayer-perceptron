@@ -1198,7 +1198,7 @@ Squared error regression
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Confusion matrices
+Confusion matrices (qualitative comparison)
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Confusion-matrices"
