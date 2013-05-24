@@ -108,13 +108,16 @@ def plot_comparative_mlp2():
 def plot_testing_errors():
 	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,1]
 	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,1]
-	plt.boxplot([mlp2,mlp5])
-	# plt.show()
+	log = np.loadtxt('testing/logistic_testing.txt')[:,1]
+	lstsq = np.loadtxt('testing/lstsq_test_classerrors.txt')
+	plt.boxplot([mlp2,mlp5,log,lstsq])
 	plt.ylabel('Misclassification rate')
-	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Linear',''))
+	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Squared',''))
 	plt.savefig('plots/testing_boxplot.pdf')
 	print "mean, std mlp2:", mlp2.mean(), ', ', mlp2.std()
 	print "mean, std mlp5:", mlp5.mean(), ', ', mlp5.std()
+	print "mean, std log:", log.mean(), ', ', log.std()
+	print "mean, std lstsq:", lstsq.mean(), ', ', lstsq.std()
 
 def plot_errors_mlp5_overfitting():
 	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
@@ -128,18 +131,20 @@ def plot_confusion_matrix(labels,k):
 		for j in range(k):
 			mat[i,j] = np.sum((labels[0,:] == i+1) == (labels[1,:] == j+1))
 	plt.matshow(mat)
+	# cax = plt.matshow(mat)
+	# plt.colorbar(cax)
 	plt.xlabel('Estimated')
 	plt.ylabel('Class')
 
 def plot_confusion_matrices():
 	plot_confusion_matrix(0.5 * (np.loadtxt('plots/confusion_mlp2.txt') + 1) + 1,2)
 	plt.savefig('plots/confusion_mlp2.pdf')
-	plot_confusion_matrix(np.loadtxt('plots/confusion_mlp5.txt'),5)
+	plot_confusion_matrix(np.loadtxt('plots/confusion_mlp5_2.txt'),5)
 	plt.savefig('plots/confusion_mlp5.pdf')
-	# plot_confusion_matrix(np.loadtxt('plots/confusion_logistic.txt'),5)
-	# plt.savefig('plots/confusion_logistic.pdf')
-	# plot_confusion_matrix(np.loadtxt('plots/confusion_lstsq.txt'),5)
-	# plt.savefig('plots/confusion_lstsq.pdf')
+	plot_confusion_matrix(np.loadtxt('plots/confusion_logistic.txt'),5)
+	plt.savefig('plots/confusion_logistic.pdf')
+	plot_confusion_matrix(np.loadtxt('plots/confusion_lstsq.txt'),5)
+	plt.savefig('plots/confusion_lstsq.pdf')
 
 
 
@@ -151,10 +156,10 @@ def plot_all():
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
-	# plot_testing_errors()
+	plot_testing_errors()
 	# plot_errors_lstsq()
 	# plot_logistic_errors()
-	plot_confusion_matrices()
+	# plot_confusion_matrices()
 
 
 
@@ -184,12 +189,12 @@ def generate_errors(classifier, stream, max_time=300, count=10):
 	return out
 
 
-def generate_confusion_matrix(classifier,streams,testing):
+def generate_confusion_matrix(classifier,streams,testing,count=20):
 	training,validation = streams
 	x_left,x_right,t = testing.all()
 	if t.shape[0] > 1:
 		t = np.argmax(t,0)
-	saved,errors,seconds = early_stopping.run(training,validation,classifier,max_time=100)
+	saved,errors,seconds = early_stopping.run(training,validation,classifier,max_time=300,count=count)
 	t_ = saved.classify(x_left,x_right)
 	return np.vstack((t,t_))
 
@@ -201,11 +206,11 @@ def generate_confusion_mlp2():
 def generate_confusion_mlp5():
 	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
 	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
-	np.savetxt('plots/confusion_mlp5.txt', confusion)
+	np.savetxt('plots/confusion_mlp5_2.txt', confusion)
 
 def generate_confusion_logistic():
-	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
-	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
+	classifier = logistic.LogisticLoss(nu=2e-2,mu=5e-2)
+	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class(),count=5)
 	np.savetxt('plots/confusion_logistic.txt', confusion)
 
 def generate_confusion_lstsq():
@@ -240,7 +245,7 @@ def generate_errors_mlp5_overfitting():
 	np.savetxt('plots/errors_mlp5_overfitting.txt', d)
 
 def generate_errors_logistic():
-	d = generate_errors(logistic.LogisticLoss(nu=1e-3,mu=1e-1), streams.validation_5class())
+	d = generate_errors(logistic.LogisticLoss(nu=2e-2,mu=5e-2), streams.validation_5class())
 	np.savetxt('plots/errors_logistic.txt', d)
 
 def generate_errors_lstsq():
@@ -261,11 +266,10 @@ def generate_all():
 	# generate_errors_mlp5()
 	# generate_errors_mlp5_overfitting()
 	# generate_comparative_mlp2()
-	generate_confusion_mlp2()
-	generate_confusion_mlp5()
-	# generate_errors_logistic()
-	# generate_errors_lstsq()
+	# generate_confusion_mlp2()
+	# generate_confusion_mlp5()
+	generate_confusion_logistic()
 
-generate_confusion_lstsq()
-#generate_all()
-#plot_all()
+# generate_confusion_lstsq()
+# generate_all()
+plot_all()
