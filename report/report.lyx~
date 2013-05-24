@@ -840,7 +840,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -871,7 +871,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -949,6 +949,104 @@ reference "fig:Logistic-error-for-1"
 
 \begin_layout Subsection
 Logistic regression
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/errors_logistic.pdf
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ../plots/classerrors_logistic.pdf
+	width 50col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Logistic error and classification error for multi-way classification using
+ logistic regression for the training and the validation set.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Logistic-error-for-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -1135,11 +1233,11 @@ Multi-way MLP
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename /home/pocus/epfl/pcml/project/pcml/plots/confusion_logistic.pdf
+	filename ../plots/confusion_logistic.pdf
 	width 25col%
 
 \end_inset
@@ -1213,13 +1311,40 @@ name "fig:Confusion-matrices"
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The confusion matrices are shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Confusion-matrices"
+
+\end_inset
+
+.
+ As expected and confirmed by the boxplot in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Comparative-boxplot-for"
+
+\end_inset
+
+, the binary MLP performs very well with very few errors only.
+ The multi-class classification methods are more confused by the input images
+ as the classes are closer to each other in terms of feature space.
+ This qualitative comparison shows a decay in classification performance
+ from the MLP to the squared error regression, confirming the results in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Comparative-boxplot-for"
+
+\end_inset
+
+.
 \end_layout
 
 \end_body

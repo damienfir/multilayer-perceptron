@@ -64,46 +64,57 @@ def plot_logistic_errors():
 	print " +---> DONE"
 
 # plot_lstsq_errors()
-#plot_logistic_errors()
+# plot_logistic_errors()
 
 def plot_errors(data):
 	plt.figure()
 	plt.plot(data[0,:], label='Training set')
 	plt.plot(data[2,:], label='Validation set')
-	# plt.savefig(plots+fname+'_errors.png')
 	plt.xlabel('Epoch number')
-	plt.ylabel('Squared error')
+	plt.ylabel('Logistic error')
 	plt.legend()
 
 def plot_errors_mlp2():
 	data = np.loadtxt('plots/errors_mlp2.txt')
 	plot_errors(data[:,:50])
-	plt.savefig('plots/errors_mlp2.pdf')
+	plt.savefig('report/errors_mlp2.pdf')
 
 def plot_errors_mlp5():
 	data = np.loadtxt('plots/errors_mlp5.txt')
 	plot_errors(data)
-	plt.savefig('plots/errors_mlp5.pdf')
+	plt.savefig('report/errors_mlp5.pdf')
 	plt.figure()
 	plt.plot(data[1,:]*100, label='Training set')
 	plt.plot(data[3,:]*100, label='Validation set')
 	plt.xlabel('Epoch number')
 	plt.ylabel('Classification error (%)')
 	plt.legend()
-	plt.savefig('plots/classerrors_mlp5.pdf')
+	plt.savefig('report/classerrors_mlp5.pdf')
+
+def plot_errors_logistic():
+	data = np.loadtxt('plots/errors_logistic.txt')
+	plot_errors(data)
+	plt.savefig('report/errors_logistic.pdf')
+	plt.figure()
+	plt.plot(data[1,:]*100, label='Training set')
+	plt.plot(data[3,:]*100, label='Validation set')
+	plt.xlabel('Epoch number')
+	plt.ylabel('Classification error (%)')
+	plt.legend()
+	plt.savefig('report/classerrors_logistic.pdf')
 
 def plot_comparative_mlp2():
 	data = np.loadtxt('plots/errors_comparative_mlp2.txt')
 	plt.figure()
-	plt.plot(data[0,:], label='nu=1e-3 mu=1e-1 H1=20 H2=50 bs=10')
-	plt.plot(data[1,:], label='nu=1e-3 mu=1e-1 H1=1  H2=1  bs=10')
-	plt.plot(data[2,:], label='nu=1e-5 mu=1e-1 H1=20 H2=50 bs=10')
-	plt.plot(data[3,:], label='nu=1e-3 mu=5e-1 H1=20 H2=50 bs=10')
-	plt.plot(data[4,:], label='nu=1e-3 mu=1e-1 H1=20 H2=50 bs=1')
+	plt.plot(data[0,:], label='eta=1e-3 mu=1e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[1,:], label='eta=1e-3 mu=1e-1 H1=1  H2=1  bs=10')
+	plt.plot(data[2,:], label='eta=1e-5 mu=1e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[3,:], label='eta=1e-3 mu=5e-1 H1=20 H2=50 bs=10')
+	plt.plot(data[4,:], label='eta=1e-3 mu=1e-1 H1=20 H2=50 bs=1')
 	plt.xlabel('Epoch number')
 	plt.ylabel('Logistic error')
 	plt.legend(fontsize=14)
-	plt.savefig('plots/comparative_mlp2.pdf')
+	plt.savefig('report/comparative_mlp2.pdf')
 
 def plot_testing_errors():
 	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,1]
@@ -113,7 +124,7 @@ def plot_testing_errors():
 	plt.boxplot([mlp2,mlp5,log,lstsq])
 	plt.ylabel('Misclassification rate')
 	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Squared',''))
-	plt.savefig('plots/testing_boxplot.pdf')
+	plt.savefig('report/testing_boxplot.pdf')
 	print "mean, std mlp2:", mlp2.mean(), ', ', mlp2.std()
 	print "mean, std mlp5:", mlp5.mean(), ', ', mlp5.std()
 	print "mean, std log:", log.mean(), ', ', log.std()
@@ -122,7 +133,7 @@ def plot_testing_errors():
 def plot_errors_mlp5_overfitting():
 	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
 	plot_errors(data[:,:400])
-	plt.savefig('plots/errors_mlp5_overfitting.pdf')
+	plt.savefig('report/errors_mlp5_overfitting.pdf')
 
 
 def plot_confusion_matrix(labels,k):
@@ -138,13 +149,13 @@ def plot_confusion_matrix(labels,k):
 
 def plot_confusion_matrices():
 	plot_confusion_matrix(0.5 * (np.loadtxt('plots/confusion_mlp2.txt') + 1) + 1,2)
-	plt.savefig('plots/confusion_mlp2.pdf')
+	plt.savefig('report/confusion_mlp2.pdf')
 	plot_confusion_matrix(np.loadtxt('plots/confusion_mlp5_2.txt'),5)
-	plt.savefig('plots/confusion_mlp5.pdf')
+	plt.savefig('report/confusion_mlp5.pdf')
 	plot_confusion_matrix(np.loadtxt('plots/confusion_logistic.txt'),5)
-	plt.savefig('plots/confusion_logistic.pdf')
+	plt.savefig('report/confusion_logistic.pdf')
 	plot_confusion_matrix(np.loadtxt('plots/confusion_lstsq.txt'),5)
-	plt.savefig('plots/confusion_lstsq.pdf')
+	plt.savefig('report/confusion_lstsq.pdf')
 
 
 
@@ -155,10 +166,10 @@ def plot_all():
 	# plot_errors_mlp2()
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
-	# plot_comparative_mlp2()
-	plot_testing_errors()
+	plot_comparative_mlp2()
+	# plot_testing_errors()
 	# plot_errors_lstsq()
-	# plot_logistic_errors()
+	# plot_errors_logistic()
 	# plot_confusion_matrices()
 
 
