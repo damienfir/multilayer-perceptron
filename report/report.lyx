@@ -547,7 +547,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Comparative plot of promissing logistic regression model parameter combinations.
+Comparative plot of promising logistic regression model parameter combinations.
  The red and black curves both show good initial convergence and stability,
  but the red performs better in the tail, thus placing the combination of
  

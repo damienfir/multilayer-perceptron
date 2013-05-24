@@ -211,11 +211,7 @@ The squared error induces a change for the top-layer residual which becomes:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-<<<<<<< HEAD
 \mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{\tilde{t}}
-=======
-\mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{t}
->>>>>>> 796fa3acf1dc7394a3c31f14457a5a110d225d93
 \]
 
 \end_inset
@@ -1039,18 +1035,18 @@ reference "fig:Comparative-boxplot-for"
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1084,7 +1080,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp5.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1106,18 +1102,15 @@ Multi-way MLP
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1147,7 +1140,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 

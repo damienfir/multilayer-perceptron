@@ -64,7 +64,7 @@ def plot_logistic_errors():
 	print " +---> DONE"
 
 # plot_lstsq_errors()
-plot_logistic_errors()
+# plot_logistic_errors()
 
 def plot_errors(data):
 	plt.figure()
@@ -108,13 +108,14 @@ def plot_comparative_mlp2():
 def plot_testing_errors():
 	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,1]
 	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,1]
-	plt.boxplot([mlp2,mlp5])
-	# plt.show()
+	lstsq = np.loadtxt('testing/lstsq_test_classerrors.txt')
+	plt.boxplot([mlp2,mlp5,lstsq])
 	plt.ylabel('Misclassification rate')
 	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Linear',''))
 	plt.savefig('plots/testing_boxplot.pdf')
 	print "mean, std mlp2:", mlp2.mean(), ', ', mlp2.std()
 	print "mean, std mlp5:", mlp5.mean(), ', ', mlp5.std()
+	print "mean, std lstsq:", lstsq.mean(), ', ', lstsq.std()
 
 def plot_errors_mlp5_overfitting():
 	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
@@ -151,10 +152,10 @@ def plot_all():
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
-	# plot_testing_errors()
+	plot_testing_errors()
 	# plot_errors_lstsq()
 	# plot_logistic_errors()
-	plot_confusion_matrices()
+	# plot_confusion_matrices()
 
 
 
@@ -264,4 +265,4 @@ def generate_all():
 	# generate_errors_lstsq()
 
 #generate_all()
-#plot_all()
+plot_all()
