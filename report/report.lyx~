@@ -206,7 +206,7 @@ The squared error induces a change for the top-layer residual which becomes:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-r^{\left(3\right)}=a^{\left(3\right)}-t
+\mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{\tilde{t}}
 \]
 
 \end_inset
@@ -232,7 +232,7 @@ In multi-way classification we also have 5 outputs instead of a single one,
 \end_inset
 
  instead of 
-\begin_inset Formula $sgn\left(a^{\left(3\right)}\right)$
+\begin_inset Formula $sign\left(a^{\left(3\right)}\right)$
 \end_inset
 
 .
@@ -246,7 +246,7 @@ Model selection
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -512,9 +512,57 @@ After having manually determined plausible parameter combinations, we performed
  these values.
  During this process, we realized that logistic regression was extremely
  sensitive to initialization and training order, so we ran our model selection
- multiple times on each parameter combination and considered mean and variance
- instead of individual results when comparing models.
- The different strategies that stood out were
+ multiple times on each parameter combination and considered mean, best
+ case and worst case performance instead of individual results when comparing
+ models (see Figure ...).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename logistic_selection.pdf
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Comparative plot of promissing logistic regression model parameter combinations.
+ The red and black curves both show good initial convergence and stability,
+ but the red performs better in the tail, thus placing the combination of
+ 
+\begin_inset Formula $\eta=2e^{-2}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu=5e^{-2}$
+\end_inset
+
+, and block size of 5 at the top of the podium.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -906,6 +954,7 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename ../plots/testing_boxplot.pdf
 	width 80col%

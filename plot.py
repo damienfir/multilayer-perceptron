@@ -41,32 +41,30 @@ def plot_errors_lstsq(data):
 
 def plot_logistic_errors():
 	print "-- Plotting Logistic Regression Errors -------------- :"
-	with open(results + 'logistic_descent.txt', 'r') as csvfile:
-		reader = csv.reader(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		data = [(nu_repr, mu, count, error, classerror) for nu_repr, mu, count, l, s, error, classerror in reader]
-		def plot_for_count(cnt):
-			counts = [(nu_repr, mu, error, classerror) for nu_repr, mu, count, error, classerror in data if count == cnt]
-			nus = list(np.reshape(np.array(map(lambda x: x[0], counts)), (12, 4))[:,0])
-			nu_map = dict(zip(nus, range(len(nus))))
-			X = np.reshape(np.array(map(lambda x: nu_map[x[0]], counts)), (12, 4))
-			Y = np.reshape(np.array(map(lambda x: float(x[1]), counts)), (12, 4))
-			Z = np.reshape(np.array(map(lambda x: float(x[2]), counts)), (12, 4))
-			fig = plt.figure()
-			ax = fig.gca(projection='3d')
-			ax.set_xticks(range(len(nus)))
-			ax.set_xticklabels(nus)
-			ax.plot_wireframe(X, Y, Z, rstride=1, cstride=1)
-			plt.savefig(plots + 'logistic_descent_' + str(cnt) + '.pdf')
-		plot_for_count('1')
-		plot_for_count('2')
-		plot_for_count('5')
-		plot_for_count('10')
-		plot_for_count('20')
-		plot_for_count('50')
+	plt.figure()
+	labels = ['eta=2e-2 mu=5e-2 bs=5', 'eta=2e-2 mu=5e-2 bs=10', 'eta=2e-2 mu=5e-2 bs=20', 'eta=2e-2 mu=1.5e-1 bs=2', 'eta=2e-2 mu=2e-1 bs=20']
+	colors = ['red', 'blue', 'green', 'black', 'pink']
+	for i in range(0, 5):
+		with open(results + 'logistic_' + str(i + 1) + '.txt', 'r') as csvfile:
+			reader = csv.reader(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			lines = [line for line in reader]
+#			max_length = max(map(lambda x: len(x), lines))
+#			lines = map(lambda line: line + ((max_length - len(line)) * [line[-1]]), lines)
+			min_length = min(map(lambda x: len(x), lines))
+			lines = map(lambda line: line[:min_length], lines)
+			data = np.array(lines, dtype=np.float)[:,6:]
+			print np.mean(data[:,4:6], 0)
+			nu, mu, bs = lines[0][0:3]
+			plt.plot(np.mean(data, 0), label=labels[i], color=colors[i])
+			plt.fill_between(range(0, data.shape[1]), np.max(data, 0), np.min(data, 0), facecolor=colors[i], alpha=0.2)
+	plt.xlabel('Epoch number')
+	plt.ylabel('Logistic error')
+	plt.legend()
+	plt.savefig('report/logistic_selection.pdf')
 	print " +---> DONE"
 
 # plot_lstsq_errors()
-#plot_logistic_errors()
+plot_logistic_errors()
 
 def plot_errors(fname):
 	data = np.loadtxt(fname)
@@ -266,4 +264,4 @@ def generate_all():
 	# generate_errors_lstsq()
 
 #generate_all()
-plot_all()
+#plot_all()
