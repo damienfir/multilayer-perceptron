@@ -99,7 +99,7 @@ Pattern classification and machine learning provide us with a large set
  Therefore, when using an elaborate tool to solve a classification problem,
  it is generally useful to make sure it actually performs better than a
  simpler technique.
- This project compares the Multi Layer Preceptron technique against Least
+ This project compares the Multi-Layer Perceptron technique against Least
  Squares Estimation and Logistic Regression on the NORB dataset.
 \end_layout
 
@@ -285,7 +285,7 @@ The residuals are computed using the derivative of the
 \begin_inset Formula $tanh$
 \end_inset
 
- tranfer function, and the derivative of the logistic loss function.
+ transfer function, and the derivative of the logistic loss function.
  Then the gradients at each layer and for each stereo image (left, right)
  are computed using the residuals.
 \end_layout
@@ -509,7 +509,7 @@ Our MLP classifier had two native parameters (namely
 \begin_inset Formula $H_{2}$
 \end_inset
 
- which we considered seperately to ensure analysis completeness), and relies
+ which we considered separately to ensure analysis completeness), and relies
  on gradient descent to converge to the optimal solution, which adds learning
  rate 
 \begin_inset Formula $\eta$
@@ -1441,7 +1441,7 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Logistic eror regression
+Logistic error regression
 \end_layout
 
 \end_inset
@@ -1537,6 +1537,120 @@ reference "fig:Comparative-boxplot-for"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename bad_left.jpg
+	scale 400
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename bad_right.jpg
+	scale 400
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Negative 
+\begin_inset Formula $t_{i}a_{i}^{\left(3\right)}$
+\end_inset
+
+ close to zero
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename verybad_left.jpg
+	scale 400
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename verybad_right.jpg
+	scale 400
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Large negative 
+\begin_inset Formula $t_{i}a_{i}^{\left(3\right)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Misclassified image examples with the multi-way MLP
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

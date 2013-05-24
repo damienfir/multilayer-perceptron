@@ -99,7 +99,7 @@ Pattern classification and machine learning provide us with a large set
  Therefore, when using an elaborate tool to solve a classification problem,
  it is generally useful to make sure it actually performs better than a
  simpler technique.
- This project compares the Multi Layer Preceptron technique against Least
+ This project compares the Multi-Layer Perceptron technique against Least
  Squares Estimation and Logistic Regression on the NORB dataset.
 \end_layout
 
@@ -1152,7 +1152,7 @@ reference "fig:Logistic-error-for-1-1"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1355,7 +1355,7 @@ reference "fig:Comparative-boxplot-for"
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -1365,7 +1365,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_mlp2.pdf
+	filename confusion_mlp2.pdf
 	width 25col%
 
 \end_inset
@@ -1399,7 +1399,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_mlp5.pdf
+	filename confusion_mlp5.pdf
 	width 25col%
 
 \end_inset
@@ -1429,7 +1429,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_logistic.pdf
+	filename confusion_logistic.pdf
 	width 25col%
 
 \end_inset
@@ -1441,7 +1441,7 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Logistic eror regression
+Logistic error regression
 \end_layout
 
 \end_inset
@@ -1459,7 +1459,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_lstsq.pdf
+	filename confusion_lstsq.pdf
 	width 25col%
 
 \end_inset
@@ -1537,6 +1537,120 @@ reference "fig:Comparative-boxplot-for"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename bad_left.jpg
+	scale 400
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename bad_right.jpg
+	scale 400
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Negative 
+\begin_inset Formula $t_{i}a_{i}^{\left(3\right)}$
+\end_inset
+
+ close to zero
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename verybad_left.jpg
+	scale 400
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename verybad_right.jpg
+	scale 400
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Large negative 
+\begin_inset Formula $t_{i}a_{i}^{\left(3\right)}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Misclassified image examples with the multi-way MLP
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
