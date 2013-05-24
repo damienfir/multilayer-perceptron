@@ -68,14 +68,13 @@ def plot_logistic_errors():
 # plot_lstsq_errors()
 #plot_logistic_errors()
 
-def plot_errors(fname):
-	data = np.loadtxt(fname)
+def plot_errors(data):
 	plt.figure()
 	plt.plot(data[0,:], label='Training set')
 	plt.plot(data[2,:], label='Validation set')
 	# plt.savefig(plots+fname+'_errors.png')
 	plt.xlabel('Epoch number')
-	plt.ylabel('Logistic error')
+	plt.ylabel('Squared error')
 	plt.legend()
 
 def plot_errors_mlp2():
@@ -113,7 +112,7 @@ def plot_testing_errors():
 	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,1]
 	plt.boxplot([mlp2,mlp5])
 	# plt.show()
-	plt.ylabel('Misclassification percentage')
+	plt.ylabel('Misclassification rate')
 	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Linear',''))
 	plt.savefig('plots/testing_boxplot.pdf')
 	print "mean, std mlp2:", mlp2.mean(), ', ', mlp2.std()
@@ -126,7 +125,6 @@ def plot_errors_mlp5_overfitting():
 
 
 def plot_confusion_matrix(labels,k):
-	print labels
 	mat = np.zeros((k,k))
 	for i in range(k):
 		for j in range(k):
@@ -155,10 +153,10 @@ def plot_all():
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
 	# plot_comparative_mlp2()
-	plot_testing_errors()
+	# plot_testing_errors()
 	# plot_errors_lstsq()
 	# plot_logistic_errors()
-	# plot_confusion_matrices()
+	plot_confusion_matrices()
 
 
 
