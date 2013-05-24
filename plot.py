@@ -109,13 +109,15 @@ def plot_comparative_mlp2():
 	plt.savefig('plots/comparative_mlp2.pdf')
 
 def plot_testing_errors():
-	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,0]
-	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,0]
+	mlp2 = np.loadtxt('testing/mlp2_testing.txt')[:,1]
+	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,1]
 	plt.boxplot([mlp2,mlp5])
 	# plt.show()
 	plt.ylabel('Misclassification percentage')
 	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Linear',''))
 	plt.savefig('plots/testing_boxplot.pdf')
+	print "mean, std mlp2:", mlp2.mean(), ', ', mlp2.std()
+	print "mean, std mlp5:", mlp5.mean(), ', ', mlp5.std()
 
 def plot_errors_mlp5_overfitting():
 	data = np.loadtxt('plots/errors_mlp5_overfitting.txt')
