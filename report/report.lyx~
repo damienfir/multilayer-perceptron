@@ -24,6 +24,7 @@
 \output_sync 0
 \bibtex_command default
 \index_command default
+\float_placement h
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -65,6 +66,10 @@
 \begin_body
 
 \begin_layout Title
+Pattern Classification and Machine Learning:
+\begin_inset Newline newline
+\end_inset
+
 Project Report
 \end_layout
 
@@ -142,12 +147,12 @@ The residuals are computed using the derivative of the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\mathbf{r}^{\left(3\right)}=\sigma\left(\mathbf{a}^{\left(3\right)}\right)-\frac{1}{2}\left(\mathbf{t}+1\right) & \Rightarrow & \nabla_{w^{\left(3\right)}}E_{i}=r^{\left(3\right)}\left(z^{\left(2\right)}\right)^{T}\\
-\mathbf{r}_{L}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \nabla_{w_{L}^{\left(2\right)}}E_{i}=\mathbf{r}_{L}^{\left(2\right)}\left(\mathbf{z}_{L}^{\left(1\right)}\right)^{T}\\
-\mathbf{r}_{R}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{\nabla}_{w_{R}^{\left(2\right)}}E_{i}=\mathbf{r}_{R}^{\left(2\right)}\left(\mathbf{z}_{R}^{\left(1\right)}\right)^{T}\\
-\mathbf{r}_{LR}^{\left(3\right)}=\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{r}_{LR}^{\left(2\right)}\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]^{T}\\
-\mathbf{r}_{L}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[L]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{r}_{L}^{\left(1\right)}\left(\mathbf{x}_{L}\right)^{T}\\
-\mathbf{r}_{R}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[R]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{r_{R}^{\left(1\right)}}\left(\mathbf{x}_{R}\right)^{T}
+\mathbf{r}^{\left(3\right)}=\sigma\left(\mathbf{a}^{\left(3\right)}\right)-\frac{1}{2}\left(\mathbf{t}+1\right) & \Rightarrow & \nabla_{\mathbf{w}^{\left(3\right)}}E_{i}=r^{\left(3\right)}\left(z^{\left(2\right)}\right)^{T}\\
+\mathbf{r}_{L}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \nabla_{\mathbf{w}_{L}^{\left(2\right)}}E_{i}=\mathbf{r}_{L}^{\left(2\right)}\left(\mathbf{z}_{L}^{\left(1\right)}\right)^{T}\\
+\mathbf{r}_{R}^{\left(2\right)}=\mathbf{a}_{LR}^{\left(2\right)}\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{\nabla}_{\mathbf{w}_{R}^{\left(2\right)}}E_{i}=\mathbf{r}_{R}^{\left(2\right)}\left(\mathbf{z}_{R}^{\left(1\right)}\right)^{T}\\
+\mathbf{r}_{LR}^{\left(3\right)}=\sigma\left(\mathbf{a}_{L}^{\left(2\right)}\right)\sigma\left(\mathbf{a}_{R}^{\left(2\right)}\right)\mathbf{w}^{\left(3\right)}\mathbf{r}^{\left(3\right)} & \Rightarrow & \mathbf{\nabla}_{\mathbf{w}_{LR}^{\left(2\right)}}E_{i}=\mathbf{r}_{LR}^{\left(2\right)}\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]^{T}\\
+\mathbf{r}_{L}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{L}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[L]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{\nabla}_{\mathbf{w}_{L}^{\left(1\right)}}E_{i}=\mathbf{r}_{L}^{\left(1\right)}\left(\mathbf{x}_{L}\right)^{T}\\
+\mathbf{r}_{R}^{\left(1\right)}=\left(\textrm{diag}\, g'\left(\mathbf{a}_{R}^{\left(2\right)}\right)\right)\left(\left(\mathbf{w}_{L}^{\left(2\right)}\right)^{T}\mathbf{r}_{L}^{\left(2\right)}+\left(\mathbf{w}_{LR[R]}^{\left(2\right)}\right)^{T}\mathbf{r}_{LR}^{\left(2\right)}\right) & \Rightarrow & \mathbf{\nabla}_{\mathbf{w}_{R}^{\left(1\right)}}E_{i}=\mathbf{r_{R}^{\left(1\right)}}\left(\mathbf{x}_{R}\right)^{T}
 \end{eqnarray*}
 
 \end_inset
@@ -157,12 +162,12 @@ The residuals are computed using the derivative of the
 
 \begin_layout Standard
 with 
-\begin_inset Formula $w_{LR[L]}^{\left(2\right)}$
+\begin_inset Formula $\mathbf{w}_{LR[L]}^{\left(2\right)}$
 \end_inset
 
  representing the portion of the weight matrix corresponding to the left
  image, and analogously for 
-\begin_inset Formula $w_{LR[R]}^{\left(2\right)}$
+\begin_inset Formula $\mathbf{w}_{LR[R]}^{\left(2\right)}$
 \end_inset
 
 , 
@@ -206,7 +211,11 @@ The squared error induces a change for the top-layer residual which becomes:
 \begin_layout Standard
 \begin_inset Formula 
 \[
+<<<<<<< HEAD
 \mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{\tilde{t}}
+=======
+\mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{t}
+>>>>>>> 796fa3acf1dc7394a3c31f14457a5a110d225d93
 \]
 
 \end_inset
@@ -228,7 +237,7 @@ and the equations of backpropagation for the top layer don't need to be
 In multi-way classification we also have 5 outputs instead of a single one,
  so the computation of the class associated with the input image is computed
  is 
-\begin_inset Formula $\underset{i=1,...,5}{argmax}\left(a_{i}^{\left(3\right)}\right)$
+\begin_inset Formula $\underset{i=1,...,5}{argmax}\left(\mathbf{a}_{i}^{\left(3\right)}\right)$
 \end_inset
 
  instead of 
@@ -244,6 +253,7 @@ Model selection
 
 \begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
 status collapsed
@@ -252,7 +262,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -308,11 +318,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Example of overfitting for the 
-\series bold
-multi-way MLP
-\series default
- used for early-stopping
+Example of overfitting for the multi-way MLP used for early-stopping
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Example-of-overfitting"
@@ -380,16 +386,24 @@ For each configuration of the MLP and gradient descent parameters, we estimated
  of the MLP, especially because they are not independent and so we need
  to run the algorithm on all combinations of value to get a reasonable estimatio
 n.
+ See Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Comparative-plot-showing"
+
+\end_inset
+
+ for examples of how the parameters influences the convergence of the MLP.
  For the learning 
 \begin_inset Formula $\eta$
 \end_inset
 
  we choose constant functions (in the order of 
-\begin_inset Formula $1e^{-3}$
+\begin_inset Formula $10^{-3}$
 \end_inset
 
-to 
-\begin_inset Formula $1e^{-5}$
+ to 
+\begin_inset Formula $10^{-5}$
 \end_inset
 
 ) as well as variations of 
@@ -428,11 +442,11 @@ to
 
 \begin_layout Standard
 The optimal parameters for the binary MLP are 
-\begin_inset Formula $\eta=1e^{-3}$
+\begin_inset Formula $\eta=10^{-3}$
 \end_inset
 
 , 
-\begin_inset Formula $\mu=1e^{-1}$
+\begin_inset Formula $\mu=10^{-1}$
 \end_inset
 
 , mini-batch size of 
@@ -450,11 +464,11 @@ The optimal parameters for the binary MLP are
 
 .
  For the multi-way MLP, we found 
-\begin_inset Formula $\eta=1e^{-3}$
+\begin_inset Formula $\eta=10^{-3}$
 \end_inset
 
 , 
-\begin_inset Formula $\mu=1e^{-1}$
+\begin_inset Formula $\mu=10^{-1}$
 \end_inset
 
 , mini-batch size of 
@@ -618,7 +632,7 @@ The model selection process for the least squares estimation technique was
 \begin_layout Standard
 We initially got a feeling for plausible values by setting the Tikhonov
  regularizer to the exponential range 
-\begin_inset Formula $\left\{ 0\right\} \cup\left\{ 5e^{-2}*2^{k}\mid0\leq k<10\right\} $
+\begin_inset Formula $\left\{ 0\right\} \cup\left\{ 5\cdot10^{-2}*2^{k}\mid0\leq k<10\right\} $
 \end_inset
 
  (see Figure 
@@ -635,7 +649,7 @@ reference "fig:Interval-selection-lstsq"
 
 , we performed a more precise search by resorting to a linear parameter
  space of 
-\begin_inset Formula $\left\{ 5e^{-2}*k\mid0\leq k<25\right\} $
+\begin_inset Formula $\left\{ 5\cdot10^{-2}*k\mid0\leq k<25\right\} $
 \end_inset
 
  (see Figure 
@@ -654,6 +668,7 @@ reference "fig:Error-function-value"
 
 \begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
 status collapsed
@@ -696,6 +711,7 @@ name "fig:Interval-selection-lstsq"
 
 \begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
 status collapsed
@@ -897,7 +913,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Logistic error and classification error for multi-way classification using
+Squared error and classification error for multi-way classification using
  MLP for the training and the validation set.
 \begin_inset CommandInset label
 LatexCommand label
@@ -949,9 +965,10 @@ Classification results
 
 \begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -969,14 +986,17 @@ status open
 
 \begin_layout Plain Layout
 Comparative boxplot for each classifier
-\end_layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Comparative-boxplot-for"
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Plain Layout
+\end_inset
+
 
 \end_layout
 
@@ -986,7 +1006,37 @@ Comparative boxplot for each classifier
 \end_layout
 
 \begin_layout Standard
+The results for the misclassification rate on the test set are shown in
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Comparative-boxplot-for"
+
+\end_inset
+
+.
+ Both implementations of MLP show higher performance than linear classifiers.
+ On the binary classification dataset, the binary MLP misclassified 
+\series bold
+3.65%
+\series default
+ of the images in average, with a standard deviation of 
+\series bold
+1.37%
+\series default
+.
+ On the 5-way classification dataset, the MLP had an average error rate
+ of 11.29% with a standard deviation of 
+\series bold
+1.11%
+\series default
+.
+ Those results were computed on 10 runs.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float figure
+placement h
 wide false
 sideways false
 status collapsed
@@ -1126,6 +1176,13 @@ Linear regression
 
 \begin_layout Plain Layout
 Confusion matrices
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Confusion-matrices"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
