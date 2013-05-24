@@ -13,14 +13,15 @@ import logistic
 results = 'results/'
 plots = 'plots/'
 
-def plot_errors_lstsq(data):
-	plt.figure()
+def plot_errors_lstsq():
+	data = np.loadtxt(results + 'lstsq_interval.txt')
+	plt.figure(figsize=(10,4))
 	plt.boxplot(data[:,1:].T, whis=2.0)
 	plt.xticks(range(1, len(data[:,0]) + 1), data[:,0], rotation=60)
 	plt.ylabel('Squared error')
 	plt.xlabel('Tikhonov regularizer')
-	plt.gcf().subplots_adjust(bottom=0.15)
-	plt.savefig(plots + 'lstsq_interval.pdf')
+	plt.gcf().subplots_adjust(bottom=0.2)
+	plt.savefig('report/' + 'lstsq_interval.pdf')
 	data = np.loadtxt(results + 'lstsq_errors.txt')
 	plt.figure()
 	plt.boxplot(data[:,1:].T, whis=2.0)
@@ -41,7 +42,7 @@ def plot_errors_lstsq(data):
 
 def plot_logistic_errors():
 	print "-- Plotting Logistic Regression Errors -------------- :"
-	plt.figure()
+	plt.figure(figsize=(10,4))
 	labels = ['eta=2e-2 mu=5e-2 bs=5', 'eta=2e-2 mu=5e-2 bs=10', 'eta=2e-2 mu=5e-2 bs=20', 'eta=2e-2 mu=1.5e-1 bs=2', 'eta=2e-2 mu=2e-1 bs=20']
 	colors = ['red', 'blue', 'green', 'black', 'pink']
 	for i in range(0, 5):
@@ -67,6 +68,7 @@ def plot_logistic_errors():
 # plot_logistic_errors()
 
 def plot_errors(data):
+#	plt.figure(figsize=(10,4))
 	plt.figure()
 	plt.plot(data[0,:], label='Training set')
 	plt.plot(data[2,:], label='Validation set')
@@ -121,6 +123,7 @@ def plot_testing_errors():
 	mlp5 = np.loadtxt('testing/mlp5_testing.txt')[:,1]
 	log = np.loadtxt('testing/logistic_testing.txt')[:,1]
 	lstsq = np.loadtxt('testing/lstsq_test_classerrors.txt')
+	plt.figure(figsize=(10,4))
 	plt.boxplot([mlp2,mlp5,log,lstsq])
 	plt.ylabel('Misclassification rate')
 	plt.xticks(np.arange(6), ('','MLP binary','MLP 5-class','Logistic','Squared',''))
@@ -166,8 +169,8 @@ def plot_all():
 	# plot_errors_mlp2()
 	# plot_errors_mlp5()
 	# plot_errors_mlp5_overfitting()
-	plot_comparative_mlp2()
-	# plot_testing_errors()
+	# plot_comparative_mlp2()
+	plot_testing_errors()
 	# plot_errors_lstsq()
 	# plot_errors_logistic()
 	# plot_confusion_matrices()

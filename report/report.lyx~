@@ -709,7 +709,7 @@ reference "fig:comparative-logistic"
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -804,43 +804,6 @@ The model selection process for the least squares estimation technique was
 \end_layout
 
 \begin_layout Standard
-We initially got a feeling for plausible values by setting the Tikhonov
- regularizer to the exponential range 
-\begin_inset Formula $\left\{ 0\right\} \cup\left\{ 5\cdot10^{-2}*2^{k}\mid0\leq k<10\right\} $
-\end_inset
-
- (see Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Interval-selection-lstsq"
-
-\end_inset
-
-).
- Once we had singled out a suitable interval, namely 
-\begin_inset Formula $\left[0;1.2\right]$
-\end_inset
-
-, we performed a more precise search by resorting to a linear parameter
- space of 
-\begin_inset Formula $\left\{ 5\cdot10^{-2}*k\mid0\leq k<25\right\} $
-\end_inset
-
- (see Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Error-function-value"
-
-\end_inset
-
-) and we can thus place the optimal regularizer at 
-\begin_inset Formula $0.6$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
 \begin_inset Float figure
 placement h
 wide false
@@ -881,6 +844,43 @@ name "fig:Interval-selection-lstsq"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+We initially got a feeling for plausible values by setting the Tikhonov
+ regularizer to the exponential range 
+\begin_inset Formula $\left\{ 0\right\} \cup\left\{ 5\cdot10^{-2}*2^{k}\mid0\leq k<10\right\} $
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Interval-selection-lstsq"
+
+\end_inset
+
+).
+ Once we had singled out a suitable interval, namely 
+\begin_inset Formula $\left[0;1.2\right]$
+\end_inset
+
+, we performed a more precise search by resorting to a linear parameter
+ space of 
+\begin_inset Formula $\left\{ 5\cdot10^{-2}*k\mid0\leq k<25\right\} $
+\end_inset
+
+ (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Error-function-value"
+
+\end_inset
+
+) and we can thus place the optimal regularizer at 
+\begin_inset Formula $0.6$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -958,7 +958,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/errors_mlp2.pdf
+	filename errors_mlp2.pdf
 	width 80col%
 
 \end_inset
@@ -972,6 +972,9 @@ status collapsed
 \begin_layout Plain Layout
 Logistic error for binary classification using MLP for the training and
  the validation set.
+ The classification error rate is not very interesting in this setting since
+ it drops to zero after one run over all training points.
+ 
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Logistic-error-for"
@@ -1018,12 +1021,12 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/errors_mlp5.pdf
+	filename errors_mlp5.pdf
 	width 50col%
 
 \end_inset
@@ -1049,12 +1052,12 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/classerrors_mlp5.pdf
+	filename classerrors_mlp5.pdf
 	width 50col%
 
 \end_inset
@@ -1087,8 +1090,8 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Squared error and classification error for multi-way classification using
- MLP for the training and the validation set.
+Squared error (a) and classification error (b) for multi-way classification
+ using MLP for the training and the validation set.
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Logistic-error-for-1"
@@ -1130,8 +1133,15 @@ Logistic regression
 \end_layout
 
 \begin_layout Standard
-In Figure ..., we show the error for the logistic regression technique in function
- of the training epoch.
+In Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Logistic-error-for-1-1"
+
+\end_inset
+
+, we show the error for the logistic regression technique in function of
+ the training epoch.
  We see right away that the convergence speed is close to the one we witnessed
  in the MLP case, but the classification error rate of the validation set
  is much lower using the multi-way MLP technique.
@@ -1142,7 +1152,7 @@ In Figure ..., we show the error for the logistic regression technique in functi
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -1154,7 +1164,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/errors_logistic.pdf
+	filename errors_logistic.pdf
 	width 50col%
 
 \end_inset
@@ -1185,7 +1195,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/classerrors_logistic.pdf
+	filename classerrors_logistic.pdf
 	width 50col%
 
 \end_inset
@@ -1214,8 +1224,8 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Logistic error and classification error for multi-way classification using
- logistic regression for the training and the validation set.
+Logistic error (a) and classification error (b) for multi-way classification
+ using logistic regression for the training and the validation set.
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Logistic-error-for-1-1"
@@ -1249,7 +1259,7 @@ status collapsed
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/testing_boxplot.pdf
+	filename testing_boxplot.pdf
 	width 80col%
 
 \end_inset
@@ -1332,7 +1342,7 @@ reference "fig:Comparative-boxplot-for"
 
 ) classification errors.
  All those results were computed on 10 runs.
- Linear regression with a squared error had the worse classification errors
+ Linear regression with squared error had the worse classification error
  percentage with 
 \begin_inset Formula $\mathbf{22.34}\%$
 \end_inset
@@ -1514,7 +1524,7 @@ reference "fig:Comparative-boxplot-for"
 
 \end_inset
 
-, the binary MLP performs very well with very few errors only.
+, the binary MLP performs very well with very few errors.
  The multi-class classification methods are more confused by the input images
  as the classes are closer to each other in terms of feature space.
  This qualitative comparison shows a decay in classification performance
