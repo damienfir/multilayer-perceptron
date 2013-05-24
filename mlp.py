@@ -155,6 +155,26 @@ class MLP:
 			error = np.sum(0.5 * np.sum(m(x, x), 1), 0).flat[0]
 			classerror = np.sum(np.argmax(ass[-1], 0) != np.argmax(t, 0), 1).flat[0]
 		return error, classerror
+	
+	def tiyi(self, x_left, x_right, t):
+		b = np.mat(np.ones([1, np.mat(x_left).shape[1]]))
+		x_left = np.mat(np.vstack([np.mat(x_left), b]), dtype=np.float)
+		x_right = np.mat(np.vstack([np.mat(x_right), b]), dtype=np.float)
+		_, ass = self.forward_pass(x_left, x_right)
+		x = ass[-1] - t
+		bad = -1e9
+		very_bad = 0
+		for i in range(x_left.shape[1]-1):
+			v = x[:,i].max()
+			if v < very_bad:
+				np.savetxt('very_bad.txt',[x_left[:-1,i], x_right[:-1,i]])
+				very_bad = v
+				print "very_bad"
+			if v > bad and v < 0:
+				np.savetxt('bad.txt',[x_left[:-1,i], x_right[:-1,i]])
+				bad =v
+				print "bad"
+
 
 	def normalized_error(self, *args):
 		if len(args) == 1:
