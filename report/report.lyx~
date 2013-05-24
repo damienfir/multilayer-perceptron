@@ -131,17 +131,7 @@ Backpropagation
 
 \begin_layout Standard
 The vectorized backpropagation equations that we implemented for the binary
- MLP are as follows:
-\end_layout
-
-\begin_layout Standard
-The residuals are computed using the derivative of the 
-\begin_inset Formula $tanh$
-\end_inset
-
- tranfer function, and the derivative of the logistic loss function.
- Then the gradients at each layer and for each stereo image (left, right)
- are computed using the residuals.
+ MLP are as follows :
 \end_layout
 
 \begin_layout Standard
@@ -161,28 +151,108 @@ The residuals are computed using the derivative of the
 \end_layout
 
 \begin_layout Standard
-with 
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Notation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset Formula $\mathbf{w}_{LR[L]}^{\left(2\right)}$
 \end_inset
 
- representing the portion of the weight matrix corresponding to the left
- image, and analogously for 
+
+\series medium
+,
+\series default
+ 
 \begin_inset Formula $\mathbf{w}_{LR[R]}^{\left(2\right)}$
 \end_inset
 
-, 
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+portion of the weight matrix corresponding to the left, respectively right,
+ image
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset Formula $g\left(\cdot\right)$
 \end_inset
 
- is the transfer function 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+transfer function 
 \begin_inset Formula $tanh\left(\cdot\right)$
 \end_inset
 
- The notation 
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset Formula $\left[\mathbf{z}_{L}^{\left(1\right)}\,\mathbf{z}_{R}^{\left(1\right)}\right]$
 \end_inset
 
- means the concatenation of 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+concatenation of 
 \begin_inset Formula $\mathbf{z}_{L}^{\left(1\right)}$
 \end_inset
 
@@ -191,6 +261,26 @@ with
 \end_inset
 
 .
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The residuals are computed using the derivative of the 
+\begin_inset Formula $tanh$
+\end_inset
+
+ tranfer function, and the derivative of the logistic loss function.
+ Then the gradients at each layer and for each stereo image (left, right)
+ are computed using the residuals.
 \end_layout
 
 \begin_layout Paragraph
@@ -211,11 +301,7 @@ The squared error induces a change for the top-layer residual which becomes:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-<<<<<<< HEAD
 \mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{\tilde{t}}
-=======
-\mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{t}
->>>>>>> 796fa3acf1dc7394a3c31f14457a5a110d225d93
 \]
 
 \end_inset
@@ -528,16 +614,24 @@ After having manually determined plausible parameter combinations, we performed
  sensitive to initialization and training order, so we ran our model selection
  multiple times on each parameter combination and considered mean, best
  case and worst case performance instead of individual results when comparing
- models (see Figure ...).
+ models (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:comparative-logistic"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename logistic_selection.pdf
 	width 100col%
@@ -563,6 +657,14 @@ Comparative plot of promissing logistic regression model parameter combinations.
 \end_inset
 
 , and block size of 5 at the top of the podium.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:comparative-logistic"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -956,7 +1058,7 @@ Logistic regression
 \end_layout
 
 \begin_layout Subsection
-Linear regression
+Least squares estimation
 \end_layout
 
 \begin_layout Subsection
@@ -1045,12 +1147,12 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1084,7 +1186,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp5.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1106,18 +1208,15 @@ Multi-way MLP
 \end_inset
 
 
-\end_layout
-
-\begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
@@ -1147,7 +1246,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename ../plots/confusion_mlp2.pdf
-	width 50col%
+	width 25col%
 
 \end_inset
 
