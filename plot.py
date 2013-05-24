@@ -64,7 +64,7 @@ def plot_logistic_errors():
 	print " +---> DONE"
 
 # plot_lstsq_errors()
-plot_logistic_errors()
+#plot_logistic_errors()
 
 def plot_errors(data):
 	plt.figure()
@@ -209,9 +209,12 @@ def generate_confusion_logistic():
 	np.savetxt('plots/confusion_logistic.txt', confusion)
 
 def generate_confusion_lstsq():
-	classifier = mlp.MLP(60,10, nu=1e-3, mu=1e-1, k=5)
-	confusion = generate_confusion_matrix(classifier,streams.validation_5class(),streams.testing_5class())
-	np.savetxt('plots/confusion_lstsq.txt', confusion)
+	classifier = lstsq.LeastSquares(0.6)
+	x_left,x_right,t = streams.training_5class().all()
+	classifier.train(x_left, x_right, t)
+	x_left,x_right,t = streams.testing_5class().all()
+	t_ = classifier.classify(x_left, x_right)
+	np.savetxt('plots/confustion_lstsq.txt', np.vstack((np.argmax(t,0),t_)))
 	
 def generate_comparative_mlp2():
 	t = 100
@@ -263,5 +266,6 @@ def generate_all():
 	# generate_errors_logistic()
 	# generate_errors_lstsq()
 
+generate_confusion_lstsq()
 #generate_all()
 #plot_all()
