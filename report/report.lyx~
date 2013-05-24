@@ -547,7 +547,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Comparative plot of promissing logistic regression model parameter combinations.
+Comparative plot of promising logistic regression model parameter combinations.
  The red and black curves both show good initial convergence and stability,
  but the red performs better in the tail, thus placing the combination of
  
@@ -1013,21 +1013,51 @@ reference "fig:Comparative-boxplot-for"
 .
  Both implementations of MLP show higher performance than linear classifiers.
  On the binary classification dataset, the binary MLP misclassified 
+\begin_inset Formula $\mathbf{3.65}\%$
+\end_inset
+
+(
 \series bold
-3.65%
+
+\begin_inset Formula $\sigma=1.37$
+\end_inset
+
+
 \series default
- of the images in average, with a standard deviation of 
+).
+ On the 5-way classification dataset, the MLP had an average error percentage
+ of 
 \series bold
-1.37%
+
+\begin_inset Formula $\mathbf{11.29}\%$
+\end_inset
+
+
 \series default
+ (
+\begin_inset Formula $\sigma=1.11$
+\end_inset
+
+), the logistic regression performed worse with an average of 
+\series bold
+
+\begin_inset Formula $\mathbf{19.84}\%$
+\end_inset
+
+
+\series default
+ (
+\begin_inset Formula $\sigma=0.61$
+\end_inset
+
+) classification errors.
+ All those results were computed on 10 runs.
+ Linear regression with a squared error had the worse classification errors
+ percentage with 
+\begin_inset Formula $\mathbf{22.34}\%$
+\end_inset
+
 .
- On the 5-way classification dataset, the MLP had an average error rate
- of 11.29% with a standard deviation of 
-\series bold
-1.11%
-\series default
-.
- Those results were computed on 10 runs.
 \end_layout
 
 \begin_layout Standard
@@ -1075,7 +1105,7 @@ Binary MLP
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1105,11 +1135,11 @@ Multi-way MLP
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_mlp2.pdf
+	filename /home/pocus/epfl/pcml/project/pcml/plots/confusion_logistic.pdf
 	width 25col%
 
 \end_inset
@@ -1121,7 +1151,7 @@ status collapsed
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Logistic regression
+Logistic eror regression
 \end_layout
 
 \end_inset
@@ -1135,11 +1165,11 @@ Logistic regression
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../plots/confusion_mlp2.pdf
+	filename ../plots/confusion_lstsq.pdf
 	width 25col%
 
 \end_inset
@@ -1151,7 +1181,7 @@ status open
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Linear regression
+Squared error regression
 \end_layout
 
 \end_inset

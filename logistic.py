@@ -33,7 +33,7 @@ class LogisticLoss:
 	def classify(self, x_left, x_right):
 		b = np.mat(np.ones(x_left.shape[1]), dtype=np.float)
 		X = np.mat(np.vstack([x_left, x_right, b]), dtype=np.float)
-		result = np.argmax(self.ws * X, 0)
+		result = np.argmax(self.ws.T * X, 0)
 		return result
 
 	def error(self, x_left, x_right, t):
