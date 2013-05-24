@@ -358,16 +358,30 @@ sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/comparative_mlp2.pdf
-	width 50col%
+	filename comparative_mlp2.pdf
+	width 100col%
 
 \end_inset
 
@@ -396,17 +410,40 @@ name "fig:Comparative-plot-showing"
 \end_inset
 
 
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hfill{}
+\end_inset
+
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "45col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Float figure
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/errors_mlp5_overfitting.pdf
-	width 50col%
+	filename errors_mlp5_overfitting.pdf
+	width 100col%
 
 \end_inset
 
@@ -437,11 +474,16 @@ name "fig:Example-of-overfitting"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Plain Layout
 \begin_inset Caption
 
 \begin_layout Plain Layout
-
+MLP training plots
 \end_layout
 
 \end_inset
@@ -959,7 +1001,7 @@ reference "fig:Logistic-error-for"
 
  shows the logistic error computed with the optimal parameters for the binary
  MLP.
- Both the errors for the training and validation set are very close and
+ Both the errors for the training and validation sets are very close and
  the MLP converges quickly to an optimal solution, as both the classification
  error for the training and the validation set are null.
 \end_layout
@@ -976,7 +1018,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1007,7 +1049,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1074,10 +1116,10 @@ reference "fig:Logistic-error-for-1"
 
 \end_inset
 
- show the same metric for the multi-way MLP.
+ shows the same metric for the multi-way MLP.
  The system converges slower than before and there is a better separation
  between the errors of the training and the validation set.
- We also showed a graph representing the classification error for both set,
+ We also showed a graph representing the classification error for both sets,
  as they both converge to zero but not at the same speed.
  It is interesting to notice that both the binary and multi-way MLP converge
  to a classification error of zero after enough training.
@@ -1087,8 +1129,12 @@ reference "fig:Logistic-error-for-1"
 Logistic regression
 \end_layout
 
-\begin_layout Subsection
-Least squares estimation
+\begin_layout Standard
+In Figure ..., we show the error for the logistic regression technique in function
+ of the training epoch.
+ We see right away that the convergence speed is close to the one we witnessed
+ in the MLP case, but the classification error rate of the validation set
+ is much lower using the multi-way MLP technique.
 \end_layout
 
 \begin_layout Subsection

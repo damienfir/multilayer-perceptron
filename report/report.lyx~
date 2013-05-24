@@ -154,7 +154,7 @@ The vectorized backpropagation equations that we implemented for the binary
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
@@ -274,6 +274,13 @@ concatenation of
 \end_layout
 
 \begin_layout Standard
+\begin_inset VSpace smallskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The residuals are computed using the derivative of the 
 \begin_inset Formula $tanh$
 \end_inset
@@ -290,15 +297,22 @@ Multi-way classification
 \begin_layout Standard
 Most of the MLP we implemented for binary classification could be reused
  for multi-way classification.
- Two changes had to be done, first the computation of the error on the top-layer
-, as we had to use the squared error, and the class selection.
+ Only two changes were necessary :
 \end_layout
 
-\begin_layout Standard
-The squared error induces a change for the top-layer residual which becomes:
-\end_layout
-
-\begin_layout Standard
+\begin_layout Enumerate
+The computation of the error on the top-layer had to be modified to squared
+ error on 
+\emph on
+1 of K
+\emph default
+ coded target vector 
+\series bold
+\emph on
+t
+\series default
+\emph default
+, which implied the following change to the top-layer residual :
 \begin_inset Formula 
 \[
 \mathbf{r}^{\left(3\right)}=\mathbf{a}^{\left(3\right)}-\mathbf{\tilde{t}}
@@ -309,25 +323,24 @@ The squared error induces a change for the top-layer residual which becomes:
 
 \end_layout
 
-\begin_layout Standard
-and the equations of backpropagation for the top layer don't need to be
- changed as they are vectorized and automatically take into account the
- multi-dimensionality of the labels 
-\begin_inset Formula $\mathbf{t}$
+\begin_layout Enumerate
+Since we now have 5 outputs instead of a single one, the computation of
+ the class associated with the input image is becomes 
+\begin_inset Formula $\underset{i=1,...,5}{argmax}\left(\mathbf{a}_{i}^{\left(3\right)}\right)$
+\end_inset
+
+ instead of 
+\begin_inset Formula $sign\left(a^{\left(3\right)}\right)$
 \end_inset
 
 .
 \end_layout
 
 \begin_layout Standard
-In multi-way classification we also have 5 outputs instead of a single one,
- so the computation of the class associated with the input image is computed
- is 
-\begin_inset Formula $\underset{i=1,...,5}{argmax}\left(\mathbf{a}_{i}^{\left(3\right)}\right)$
-\end_inset
-
- instead of 
-\begin_inset Formula $sign\left(a^{\left(3\right)}\right)$
+Interestingly, the equations for backpropagation don't need to be changed
+ as they are vectorized and automatically take into account the multi-dimensiona
+lity of the labels 
+\begin_inset Formula $\mathbf{\tilde{t}}$
 \end_inset
 
 .
@@ -342,18 +355,32 @@ Model selection
 placement h
 wide false
 sideways false
-status collapsed
+status open
+
+\begin_layout Plain Layout
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/comparative_mlp2.pdf
+	filename comparative_mlp2.pdf
 	width 50col%
 
 \end_inset
@@ -383,16 +410,35 @@ name "fig:Comparative-plot-showing"
 \end_inset
 
 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+status open
+
+\begin_layout Plain Layout
 \begin_inset Float figure
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename ../plots/errors_mlp5_overfitting.pdf
+	filename errors_mlp5_overfitting.pdf
 	width 50col%
 
 \end_inset
@@ -424,6 +470,11 @@ name "fig:Example-of-overfitting"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
 \begin_layout Plain Layout
 \begin_inset Caption
 
@@ -446,32 +497,38 @@ name "fig:Example-of-overfitting"
 \end_layout
 
 \begin_layout Standard
-For each configuration of the MLP and gradient descent parameters, we estimated
- the total error on the validation set (a third of the initial set, selected
- randomly).
- We tested performance for the learning rate 
-\begin_inset Formula $\eta$
-\end_inset
-
-, the momentum term 
-\begin_inset Formula $\mu$
-\end_inset
-
- and the size of the mini-batch.
- Specifically for MLP, we tested the numbers of activation units for the
- first and second layer (
+Our MLP classifier had two native parameters (namely 
 \begin_inset Formula $H_{1}$
 \end_inset
 
-, 
-\begin_inset Formula $H_{2})$
+ and 
+\begin_inset Formula $H_{2}$
 \end_inset
 
-.
- Its unintuitive how the value of one parameter may affect the performance
- of the MLP, especially because they are not independent and so we need
- to run the algorithm on all combinations of value to get a reasonable estimatio
-n.
+ which we considered seperately to ensure analysis completeness), and relies
+ on gradient descent to converge to the optimal solution, which adds learning
+ rate 
+\begin_inset Formula $\eta$
+\end_inset
+
+, momentum term 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and mini-batch size to the parameter list.
+ The impact of each parameter on the final performance of the MLP is unfortunate
+ly extremely unintuitive and difficult to predict, especially because plausible
+ ranges are highly inter-dependent.
+ Because of this, we couldn't perform standard model selection by computing
+ errors on the cartesian product of a reasonable range of parameter values.
+\end_layout
+
+\begin_layout Standard
+We circumvented the problem by running the algorithm with reduced training
+ and validation sets on a large combinations of values to get a reasonable
+ estimation.
+ This enabled us to narrow down the search space and perform better tests
+ with the full training set.
  See Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -480,12 +537,12 @@ reference "fig:Comparative-plot-showing"
 \end_inset
 
  for examples of how the parameters influences the convergence of the MLP.
- For the learning 
+ For the learning rate 
 \begin_inset Formula $\eta$
 \end_inset
 
- we choose constant functions (in the order of 
-\begin_inset Formula $10^{-3}$
+ we tested with constant values (in the order of 
+\begin_inset Formula $10^{-2}$
 \end_inset
 
  to 
@@ -493,7 +550,15 @@ reference "fig:Comparative-plot-showing"
 \end_inset
 
 ) as well as variations of 
-\begin_inset Formula $\frac{1}{x}$
+\begin_inset Formula $10^{-n}x^{-\frac{1}{a}}$
+\end_inset
+
+ with 
+\begin_inset Formula $n\in\left[0;3\right]$
+\end_inset
+
+ and 
+\begin_inset Formula $a\in\left[1;3\right]$
 \end_inset
 
 .
@@ -535,7 +600,7 @@ The optimal parameters for the binary MLP are
 \begin_inset Formula $\mu=10^{-1}$
 \end_inset
 
-, mini-batch size of 
+, with mini-batch size of 
 \begin_inset Formula $20$
 \end_inset
 
@@ -583,8 +648,8 @@ reference "fig:Example-of-overfitting"
  is an example of overfitting where the error on the validation set initially
  decreases but starts to increase as soon as the MLP is overfitting the
  training data.
- For all gradient-descent based algorithm, we used early stopping on this
- graph to avoid overfitting.
+ We used early stopping to avoid this behavior in all our gradient-descent
+ based algorithms.
 \end_layout
 
 \begin_layout Subsection
@@ -621,14 +686,26 @@ reference "fig:comparative-logistic"
 
 \end_inset
 
-).
+), resulting in the optimal configuration of 
+\begin_inset Formula $\eta=2e^{-2}$
+\end_inset
+
+, 
+\begin_inset Formula $\mu=5e^{-2}$
+\end_inset
+
+, with block size of 
+\begin_inset Formula $5$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -647,16 +724,7 @@ status collapsed
 \begin_layout Plain Layout
 Comparative plot of promising logistic regression model parameter combinations.
  The red and black curves both show good initial convergence and stability,
- but the red performs better in the tail, thus placing the combination of
- 
-\begin_inset Formula $\eta=2e^{-2}$
-\end_inset
-
-, 
-\begin_inset Formula $\mu=5e^{-2}$
-\end_inset
-
-, and block size of 5 at the top of the podium.
+ but the red performs better in the tail.
  
 \begin_inset CommandInset label
 LatexCommand label
@@ -929,7 +997,7 @@ reference "fig:Logistic-error-for"
 
  shows the logistic error computed with the optimal parameters for the binary
  MLP.
- Both the errors for the training and validation set are very close and
+ Both the errors for the training and validation sets are very close and
  the MLP converges quickly to an optimal solution, as both the classification
  error for the training and the validation set are null.
 \end_layout
@@ -946,7 +1014,7 @@ status collapsed
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -977,7 +1045,7 @@ status open
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -1044,10 +1112,10 @@ reference "fig:Logistic-error-for-1"
 
 \end_inset
 
- show the same metric for the multi-way MLP.
+ shows the same metric for the multi-way MLP.
  The system converges slower than before and there is a better separation
  between the errors of the training and the validation set.
- We also showed a graph representing the classification error for both set,
+ We also showed a graph representing the classification error for both sets,
  as they both converge to zero but not at the same speed.
  It is interesting to notice that both the binary and multi-way MLP converge
  to a classification error of zero after enough training.
@@ -1057,8 +1125,12 @@ reference "fig:Logistic-error-for-1"
 Logistic regression
 \end_layout
 
-\begin_layout Subsection
-Least squares estimation
+\begin_layout Standard
+In Figure ..., we show the error for the logistic regression technique in function
+ of the training epoch.
+ We see right away that the convergence speed is close to the one we witnessed
+ in the MLP case, but the classification error rate of the validation set
+ is much lower using the multi-way MLP technique.
 \end_layout
 
 \begin_layout Subsection
@@ -1171,13 +1243,13 @@ reference "fig:Comparative-boxplot-for"
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1211,7 +1283,7 @@ Binary MLP
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -1241,15 +1313,11 @@ Multi-way MLP
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-<<<<<<< HEAD
-	filename ../plots/confusion_mlp2.pdf
-=======
-	filename /home/pocus/epfl/pcml/project/pcml/plots/confusion_logistic.pdf
->>>>>>> 7ddd86a2eae8c9fa2b275f5a085fa88ccf6e195a
+	filename ../plots/confusion_logistic.pdf
 	width 25col%
 
 \end_inset
@@ -1275,15 +1343,11 @@ Logistic eror regression
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-<<<<<<< HEAD
-	filename ../plots/confusion_mlp2.pdf
-=======
 	filename ../plots/confusion_lstsq.pdf
->>>>>>> 7ddd86a2eae8c9fa2b275f5a085fa88ccf6e195a
 	width 25col%
 
 \end_inset
